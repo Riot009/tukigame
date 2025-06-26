@@ -1,0 +1,443 @@
+[
+  {
+    "pregunta": "¿Cual es la capital de Argentina?",
+    "r_1": "Cordoba",
+    "r_2": "La Plata",
+    "r_3": "Buenos Aires",
+    "r_4": "Rosario",
+    "correcta": "Buenos Aires"
+  },
+  {
+    "pregunta": "¿Cual es el mamifero mas grande del mundo?",
+    "r_1": "Elefante Africano",
+    "r_2": "Ballena Azul",
+    "r_3": "Rinoceronte Blanco",
+    "r_4": "Jirafa",
+    "correcta": "Ballena Azul"
+  },
+  {
+    "pregunta": "¿Que baile es considerado un simbolo cultural de Argentina?",
+    "r_1": "Samba",
+    "r_2": "Cumbia",
+    "r_3": "Tango",
+    "r_4": "Salsa",
+    "correcta": "Tango"
+  },
+  {
+    "pregunta": "¿Cual es la capital de la provincia de Mendoza, famosa por sus vinos?",
+    "r_1": "San Juan",
+    "r_2": "Mendoza",
+    "r_3": "San Rafael",
+    "r_4": "Malargüe",
+    "correcta": "Mendoza"
+  },
+  {
+    "pregunta": "¿Cual de estos animales es un felino nativo de los bosques y selvas de Argentina?",
+    "r_1": "Leon",
+    "r_2": "Tigre",
+    "r_3": "Leopardo",
+    "r_4": "Yaguarete",
+    "correcta": "Yaguarete"
+  },
+  {
+    "pregunta": "¿Cual es el pico mas alto de America, ubicado en Argentina?",
+    "r_1": "Monte Fitz Roy",
+    "r_2": "Cerro Torre",
+    "r_3": "Volcan Lanin",
+    "r_4": "Cerro Aconcagua",
+    "correcta": "Cerro Aconcagua"
+  },
+  {
+    "pregunta": "¿En que provincia argentina se encuentran las Cataratas del Iguazu?",
+    "r_1": "Jujuy",
+    "r_2": "Misiones",
+    "r_3": "Corrientes",
+    "r_4": "Salta",
+    "correcta": "Misiones"
+  },
+  {
+    "pregunta": "¿Que famoso glaciar se encuentra en el Parque Nacional Los Glaciares, en Santa Cruz?",
+    "r_1": "Glaciar Upsala",
+    "r_2": "Glaciar Viedma",
+    "r_3": "Glaciar Perito Moreno",
+    "r_4": "Glaciar Spegazzini",
+    "correcta": "Glaciar Perito Moreno"
+  },
+  {
+    "pregunta": "¿Cual es la provincia mas extensa de Argentina?",
+    "r_1": "Santa Cruz",
+    "r_2": "Chubut",
+    "r_3": "Buenos Aires",
+    "r_4": "Cordoba",
+    "correcta": "Buenos Aires"
+  },
+  {
+    "pregunta": "¿Cual es la capital de la provincia de Tierra del Fuego, Antartida e Islas del Atlantico Sur?",
+    "r_1": "Rio Grande",
+    "r_2": "Tolhuin",
+    "r_3": "Puerto Argentino",
+    "r_4": "Ushuaia",
+    "correcta": "Ushuaia"
+  },
+  {
+    "pregunta": "¿Como se conoce a la extensa region semiarida ubicada en el sur de Argentina?",
+    "r_1": "Pampa Humeda",
+    "r_2": "Patagonia",
+    "r_3": "Cuyo",
+    "r_4": "Litoral",
+    "correcta": "Patagonia"
+  },
+  {
+    "pregunta": "¿Cual es el rio mas ancho del mundo, que sirve de frontera entre Argentina y Uruguay?",
+    "r_1": "Rio Parana",
+    "r_2": "Rio de la Plata",
+    "r_3": "Rio Uruguay",
+    "r_4": "Rio Salado",
+    "correcta": "Rio de la Plata"
+  },
+  {
+    "pregunta": "¿En que provincia se encuentra la Quebrada de Humahuaca, Patrimonio de la Humanidad?",
+    "r_1": "Salta",
+    "r_2": "Catamarca",
+    "r_3": "Tucuman",
+    "r_4": "Jujuy",
+    "correcta": "Jujuy"
+  },
+  {
+    "pregunta": "La ciudad de Bariloche, famosa por sus lagos y montañas, se encuentra en la provincia de...",
+    "r_1": "Neuquen",
+    "r_2": "Chubut",
+    "r_3": "Rio Negro",
+    "r_4": "Santa Cruz",
+    "correcta": "Rio Negro"
+  },
+  {
+    "pregunta": "¿Cual es la capital de la provincia de Cordoba?",
+    "r_1": "Villa Carlos Paz",
+    "r_2": "Rio Cuarto",
+    "r_3": "Cordoba",
+    "r_4": "Alta Gracia",
+    "correcta": "Cordoba"
+  },
+  {
+    "pregunta": "¿En que año ocurrio la Revolucion de Mayo?",
+    "r_1": "1816",
+    "r_2": "1810",
+    "r_3": "1806",
+    "r_4": "1853",
+    "correcta": "1810"
+  },
+  {
+    "pregunta": "¿Quien es conocido como el 'Padre de la Patria' en Argentina?",
+    "r_1": "Manuel Belgrano",
+    "r_2": "Domingo F. Sarmiento",
+    "r_3": "Jose de San Martin",
+    "r_4": "Juan Manuel de Rosas",
+    "correcta": "Jose de San Martin"
+  },
+  {
+    "pregunta": "¿Quien fue el creador de la bandera argentina?",
+    "r_1": "Jose de San Martin",
+    "r_2": "Manuel Belgrano",
+    "r_3": "Mariano Moreno",
+    "r_4": "Cornelio Saavedra",
+    "correcta": "Manuel Belgrano"
+  },
+  {
+    "pregunta": "¿En que ciudad se declaro la Independencia de las Provincias Unidas del Rio de la Plata?",
+    "r_1": "Buenos Aires",
+    "r_2": "Cordoba",
+    "r_3": "Salta",
+    "r_4": "San Miguel de Tucuman",
+    "correcta": "San Miguel de Tucuman"
+  },
+  {
+    "pregunta": "¿En que fecha se conmemora el Dia de la Independencia Argentina?",
+    "r_1": "25 de Mayo",
+    "r_2": "20 de Junio",
+    "r_3": "9 de Julio",
+    "r_4": "17 de Agosto",
+    "correcta": "9 de Julio"
+  },
+  {
+    "pregunta": "¿Como se llamo el primer gobierno patrio de Argentina?",
+    "r_1": "Virreinato",
+    "r_2": "Congreso de Tucuman",
+    "r_3": "Primera Junta",
+    "r_4": "El Directorio",
+    "correcta": "Primera Junta"
+  },
+  {
+    "pregunta": "¿Que presidente argentino fue conocido como el 'Padre del Aula' por su impulso a la educacion?",
+    "r_1": "Julio Argentino Roca",
+    "r_2": "Bartolome Mitre",
+    "r_3": "Nicolas Avellaneda",
+    "r_4": "Domingo F. Sarmiento",
+    "correcta": "Domingo F. Sarmiento"
+  },
+  {
+    "pregunta": "La 'Campaña del Desierto' fue liderada por...",
+    "r_1": "Justo Jose de Urquiza",
+    "r_2": "Julio Argentino Roca",
+    "r_3": "Facundo Quiroga",
+    "r_4": "Adolfo Alsina",
+    "correcta": "Julio Argentino Roca"
+  },
+  {
+    "pregunta": "¿Que garantizo la Ley Saenz Peña de 1912?",
+    "r_1": "La educacion publica",
+    "r_2": "El fin de la esclavitud",
+    "r_3": "El voto secreto, universal y obligatorio para hombres",
+    "r_4": "La separacion de la Iglesia y el Estado",
+    "correcta": "El voto secreto, universal y obligatorio para hombres"
+  },
+  {
+    "pregunta": "¿Que expresidente y su esposa fueron figuras centrales del movimiento peronista?",
+    "r_1": "Hipolito Yrigoyen",
+    "r_2": "Arturo Frondizi",
+    "r_3": "Juan Domingo Peron y Eva Peron",
+    "r_4": "Raul Alfonsin",
+    "correcta": "Juan Domingo Peron y Eva Peron"
+  },
+  {
+    "pregunta": "¿Cual es el ave nacional de Argentina, conocida por construir nidos de barro?",
+    "r_1": "Condor Andino",
+    "r_2": "Cardenal",
+    "r_3": "Hornero",
+    "r_4": "Loro Barranquero",
+    "correcta": "Hornero"
+  },
+  {
+    "pregunta": "¿Cual es la flor nacional de Argentina?",
+    "r_1": "Jacaranda",
+    "r_2": "Ceibo",
+    "r_3": "Pasionaria",
+    "r_4": "Rosa",
+    "correcta": "Ceibo"
+  },
+  {
+    "pregunta": "¿Que gran mamifero marino visita anualmente las costas de la Peninsula Valdes?",
+    "r_1": "Delfin",
+    "r_2": "Orca",
+    "r_3": "Lobo Marino",
+    "r_4": "Ballena Franca Austral",
+    "correcta": "Ballena Franca Austral"
+  },
+  {
+    "pregunta": "¿Que roedor sociable y de gran tamaño es comun ver en los humedales y rios argentinos?",
+    "r_1": "Nutria",
+    "r_2": "Vizcacha",
+    "r_3": "Carpincho",
+    "r_4": "Castor",
+    "correcta": "Carpincho"
+  },
+  {
+    "pregunta": "¿Que majestuosa ave rapaz habita en la Cordillera de los Andes?",
+    "r_1": "aguila Mora",
+    "r_2": "Halcon Peregrino",
+    "r_3": "Lechuza",
+    "r_4": "Condor Andino",
+    "correcta": "Condor Andino"
+  },
+  {
+    "pregunta": "¿Que arbol de flores lilas adorna muchas ciudades argentinas en primavera?",
+    "r_1": "Lapacho",
+    "r_2": "Palo Borracho",
+    "r_3": "Jacaranda",
+    "r_4": "Tipa",
+    "correcta": "Jacaranda"
+  },
+  {
+    "pregunta": "¿Que camelido sudamericano salvaje es un icono de la Patagonia?",
+    "r_1": "Vicuña",
+    "r_2": "Alpaca",
+    "r_3": "Llama",
+    "r_4": "Guanaco",
+    "correcta": "Guanaco"
+  },
+  {
+    "pregunta": "¿Que infusion tradicional se prepara con hojas de Ilex paraguariensis?",
+    "r_1": "Te",
+    "r_2": "Cafe",
+    "r_3": "Mate",
+    "r_4": "Mate cocido",
+    "correcta": "Mate"
+  },
+  {
+    "pregunta": "¿Como se llama el pequeño armadillo cuya caparazon se enrolla como una bola?",
+    "r_1": "Mulita",
+    "r_2": "Peludo",
+    "r_3": "Piche",
+    "r_4": "Tatu Carreta",
+    "correcta": "Mulita"
+  },
+  {
+    "pregunta": "¿Que pez de rio, de color dorado y muy combativo, es un trofeo de pesca deportiva?",
+    "r_1": "Surubi",
+    "r_2": "Pacu",
+    "r_3": "Dorado",
+    "r_4": "Boga",
+    "correcta": "Dorado"
+  },
+  {
+    "pregunta": "¿Que planeta de nuestro sistema solar es conocido como el 'Planeta Rojo'?",
+    "r_1": "Venus",
+    "r_2": "Jupiter",
+    "r_3": "Marte",
+    "r_4": "Saturno",
+    "correcta": "Marte"
+  },
+  {
+    "pregunta": "¿Cual es la formula quimica del agua?",
+    "r_1": "CO2",
+    "r_2": "O2",
+    "r_3": "H2O",
+    "r_4": "N2",
+    "correcta": "H2O"
+  },
+  {
+    "pregunta": "¿Que fuerza invisible atrae los objetos hacia el centro de la Tierra?",
+    "r_1": "Friccion",
+    "r_2": "Magnetismo",
+    "r_3": "Gravedad",
+    "r_4": "Inercia",
+    "correcta": "Gravedad"
+  },
+  {
+    "pregunta": "¿Como se llama el proceso que usan las plantas para convertir la luz solar en alimento?",
+    "r_1": "Respiracion",
+    "r_2": "Fotosintesis",
+    "r_3": "Transpiracion",
+    "r_4": "Polinizacion",
+    "correcta": "Fotosintesis"
+  },
+  {
+    "pregunta": "El invento del boligrafo, o 'birome', es atribuido a un inventor nacionalizado...",
+    "r_1": "Frances",
+    "r_2": "Italiano",
+    "r_3": "Español",
+    "r_4": "Argentino",
+    "correcta": "Argentino"
+  },
+  {
+    "pregunta": "¿Cual es el gas mas abundante en la atmosfera de nuestro planeta?",
+    "r_1": "Oxigeno",
+    "r_2": "Dioxido de Carbono",
+    "r_3": "Nitrogeno",
+    "r_4": "Argon",
+    "correcta": "Nitrogeno"
+  },
+  {
+    "pregunta": "¿Que organo del cuerpo humano es el responsable de bombear la sangre?",
+    "r_1": "Pulmones",
+    "r_2": "Cerebro",
+    "r_3": "Corazon",
+    "r_4": "Higado",
+    "correcta": "Corazon"
+  },
+  {
+    "pregunta": "¿Quien es conocido por haber desarrollado la Teoria de la Relatividad?",
+    "r_1": "Isaac Newton",
+    "r_2": "Galileo Galilei",
+    "r_3": "Albert Einstein",
+    "r_4": "Nikola Tesla",
+    "correcta": "Albert Einstein"
+  },
+  {
+    "pregunta": "¿Cuantos planetas conforman nuestro Sistema Solar?",
+    "r_1": "Siete",
+    "r_2": "Ocho",
+    "r_3": "Nueve",
+    "r_4": "Diez",
+    "correcta": "Ocho"
+  },
+  {
+    "pregunta": "En los estados de la materia, ¿cual tiene las particulas mas separadas y en movimiento?",
+    "r_1": "Solido",
+    "r_2": "Liquido",
+    "r_3": "Gaseoso",
+    "r_4": "Plasma",
+    "correcta": "Gaseoso"
+  },
+  {
+    "pregunta": "¿Quien escribio 'El Aleph' y 'Ficciones', siendo un icono de la literatura argentina?",
+    "r_1": "Julio Cortazar",
+    "r_2": "Jorge Luis Borges",
+    "r_3": "Ernesto Sabato",
+    "r_4": "Adolfo Bioy Casares",
+    "correcta": "Jorge Luis Borges"
+  },
+  {
+    "pregunta": "¿Que personaje de historieta, creado por Quino, odia la sopa y se preocupa por el mundo?",
+    "r_1": "Gaturro",
+    "r_2": "Patoruzu",
+    "r_3": "Mafalda",
+    "r_4": "Clemente",
+    "correcta": "Mafalda"
+  },
+  {
+    "pregunta": "¿Que banda liderada por Gustavo Cerati es un pilar del rock en español?",
+    "r_1": "Los Fabulosos Cadillacs",
+    "r_2": "Sui Generis",
+    "r_3": "Patricio Rey y sus Redonditos de Ricota",
+    "r_4": "Soda Stereo",
+    "correcta": "Soda Stereo"
+  },
+  {
+    "pregunta": "¿Cual es el postre tipico argentino que se hace cocinando lentamente leche con azucar?",
+    "r_1": "Flan con crema",
+    "r_2": "Dulce de leche",
+    "r_3": "Pastel de batata",
+    "r_4": "Alfajor de maicena",
+    "correcta": "Dulce de leche"
+  },
+  {
+    "pregunta": "¿Cual es la capital de Francia?",
+    "r_1": "Londres",
+    "r_2": "Roma",
+    "r_3": "Paris",
+    "r_4": "Berlin",
+    "correcta": "Paris"
+  },
+  {
+    "pregunta": "¿Quien pinto la 'Mona Lisa'?",
+    "r_1": "Vincent van Gogh",
+    "r_2": "Pablo Picasso",
+    "r_3": "Leonardo da Vinci",
+    "r_4": "Miguel angel",
+    "correcta": "Leonardo da Vinci"
+  },
+  {
+    "pregunta": "¿En que pais se encuentran las piramides de Giza?",
+    "r_1": "Mexico",
+    "r_2": "Peru",
+    "r_3": "Egipto",
+    "r_4": "Sudan",
+    "correcta": "Egipto"
+  },
+  {
+    "pregunta": "¿Cual de estas obras fue escrita por William Shakespeare?",
+    "r_1": "Don Quijote de la Mancha",
+    "r_2": "La Odisea",
+    "r_3": "Romeo y Julieta",
+    "r_4": "La Divina Comedia",
+    "correcta": "Romeo y Julieta"
+  },
+  {
+    "pregunta": "¿Que artista argentino es famoso por sus pinturas del barrio de La Boca?",
+    "r_1": "Antonio Berni",
+    "r_2": "Xul Solar",
+    "r_3": "Benito Quinquela Martin",
+    "r_4": "Lino Enea Spilimbergo",
+    "correcta": "Benito Quinquela Martin"
+  },
+  {
+    "pregunta": "La novela 'Rayuela', que puede leerse de multiples maneras, fue escrita por...",
+    "r_1": "Jorge Luis Borges",
+    "r_2": "Julio Cortazar",
+    "r_3": "Abelardo Castillo",
+    "r_4": "Manuel Puig",
+    "correcta": "Julio Cortazar"
+  }
+]
+

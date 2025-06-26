@@ -1,55 +1,7 @@
 from configuracion import *
-import json 
+import json
+import random
 
-def cargar_preguntas(archivo:str)->list:
-    """Carga las preguntas desde el JSON."""
-    with open(archivo, "r") as f:
-        preguntas = json.load(f)
-    return preguntas
-
-def extraer_preguntas(datos)->list[str]:
-    preguntas = []
-    for item in datos:
-        pregunta = str(item.get("pregunta", ""))
-        preguntas.append(pregunta)
-    return preguntas
-
-cargar_preguntas("datos.json")
-print(extraer_preguntas(cargar_preguntas("datos.json")))
-# def obtener_textos_pregunta(pregunta: dict) -> tuple[str, str, str, str, str]:
-#     """
-#     Devuelve los textos de la pregunta y sus respuestas como tupla.
-#     """
-#     texto_pregunta = ""
-#     respuesta1 = ""
-#     respuesta2 = ""
-#     respuesta3 = ""
-#     respuesta4 = ""
-#     if pregunta:
-#         if "pregunta" in pregunta:
-#             texto_pregunta = pregunta["pregunta"]
-#         if "r_1" in pregunta:
-#             respuesta1 = pregunta["r_1"]
-#         if "r_2" in pregunta:
-#             respuesta2 = pregunta["r_2"]
-#         if "r_3" in pregunta:
-#             respuesta3 = pregunta["r_3"]
-#         if "r_4" in pregunta:
-#             respuesta4 = pregunta["r_4"]
-#     return texto_pregunta, respuesta1, respuesta2, respuesta3, respuesta4
-
-# Uso:
-# preguntas = cargar_preguntas("datos.json")
-# textos_botones = extraer_textos_botones(preguntas)
-# Luego puedes usar textos_botones['jugar'], etc. para los botones
-
-#def crear_boton ( tx:int, ty:int, px:int, py:int, color:int):
-#    pygame.draw.rect(color(px,py,tx,ty))
-
-
-# #def crear_boton(surface, px: int, py: int, tx: int, ty: int, color: tuple):
-#     rect = pygame.draw.rect(px, py, tx, ty)
-#     ubicar_boton()
 
 def inicializar_pantalla(tam:tuple)->pg.Surface:
     """D"""
@@ -69,7 +21,9 @@ def dibujar_boton(pantalla:pg.Surface, color:tuple, color_borde: tuple, pr_x:int
     texto_rect = texto_render.get_rect(center=rectangulo.center)
     pantalla.blit(texto_render, texto_rect)
 
+
     return boton
+
 
 def ubicar_boton(pantalla:pg.Surface, porcentaje_x:int, porcentaje_y:int, porcentaje_ancho:int, porcentaje_alto:int):
     """D"""
@@ -82,19 +36,28 @@ def ubicar_boton(pantalla:pg.Surface, porcentaje_x:int, porcentaje_y:int, porcen
     return boton
 
 
+def cargar_preguntas(ruta_archivo:str, cantidad:int=10)->list:
+    
+    archivo = open(ruta_archivo, "r")
+    todas = json.load(archivo)
+    archivo.close()
 
+    seleccionadas = random.sample(todas, k=cantidad)
+    preguntas_formateadas = []
 
+    
 
+    for p in seleccionadas:
+        respuestas = [p["r_1"], p["r_2"], p["r_3"], p["r_4"]]
+        random.shuffle(respuestas)
+        preguntas_formateadas.append({
+            "pregunta": p["pregunta"],
+            "respuestas": respuestas,
+            "correcta": p["correcta"]
+        })
 
-#def pantalla_princcipal():
-        # #pantalla
-        # pantalla.fill(COLOR_FONDO) # color fondo
-        # pantalla.blit(imagen_fondo, (0,0))
-        
-        # #botones
-        # titulo = dibujar_boton(pantalla, COLOR_BLANCO,COLOR_FONDO, 0.50, 0.15, 0.1, 0.1, 0, 0, "TUKIGAME")
-        # boton_jugar = dibujar_boton(pantalla, COLOR_BLANCO,COLOR_FONDO, 0.50, 0.35, 0.1, 0.1, 0, 0, "JUGAR")
-        # boton_puntaje = dibujar_boton(pantalla, COLOR_BLANCO,COLOR_FONDO, 0.50, 0.50, 0.1, 0.1, 0, 0, "PUNTAJE")
-        # boton_opciones = dibujar_boton(pantalla, COLOR_BLANCO,COLOR_FONDO, 0.50, 0.65, 0.1, 0.1, 0, 0, "OPCIONES")
-        # boton_salir = dibujar_boton(pantalla, COLOR_BLANCO,COLOR_FONDO, 0.50, 0.80, 0.1, 0.1, 0, 0, "SALIR")
+    return preguntas_formateadas
+
+  
+
     

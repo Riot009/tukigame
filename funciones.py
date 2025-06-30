@@ -8,22 +8,75 @@ def inicializar_pantalla(tam:tuple)->pg.Surface:
     pantalla = pg.display.set_mode(tam, pg.RESIZABLE)
     return pantalla
 
-def dibujar_boton(pantalla:pg.Surface, color:tuple, color_borde: tuple, pr_x:int, pr_y:int, pr_ancho:int, pr_alto:int, ancho_borde:int, borde:int, texto:str="")->pg.Rect:
-    """D"""
-    rectangulo = ubicar_boton(pantalla, pr_x, pr_y, pr_ancho, pr_alto)
-    boton = pg.draw.rect(pantalla, color, rectangulo, border_radius=borde)
-    pg.draw.rect(pantalla, color_borde, rectangulo, ancho_borde, border_radius=borde)
+
+def dibujar_boton(pantalla: pg.Surface, color_texto: tuple, _color_borde: tuple,
+                  pr_x: float, pr_y: float, pr_ancho: float, pr_alto: float,
+                  _ancho_borde: int, _borde: int, texto: str = "") -> pg.Rect:
     
-    alto_boton = rectangulo.height
-    fuente = pg.font.SysFont(None, int(alto_boton * 0.5))  # tamaño relativo
-    texto_render = fuente.render(texto, True, (COLOR_BLANCO))  # color blanco
+    rect = ubicar_boton(pantalla, pr_x, pr_y, pr_ancho, pr_alto)
 
-    texto_rect = texto_render.get_rect(center=rectangulo.center)
-    pantalla.blit(texto_render, texto_rect)
+    tamaño_fuente_max = 35
+    tamaño_fuente = tamaño_fuente_max
 
+    fuente = pg.font.Font(RUTA_FUENTE, tamaño_fuente)
 
-    return boton
+    lineas = texto.split("\n")
+    texto_render = []
 
+    for linea in lineas:
+        render = fuente.render(linea, True, color_texto)
+        texto_render.append(render)
+
+    while True:
+        ancho_max = 0
+        alto_total = 0
+        for render in texto_render:
+            ancho = render.get_width()
+            alto = render.get_height()
+
+            if ancho > ancho_max:
+                ancho_max = ancho
+            alto_total += alto
+
+        if (ancho_max > rect.width * 0.95 or alto_total > rect.height * 0.95) and tamaño_fuente > 10:
+            tamaño_fuente -= 1
+            fuente = pg.font.Font(RUTA_FUENTE, tamaño_fuente)
+            texto_render = []
+            for linea in lineas:
+                render = fuente.render(linea, True, color_texto)
+                texto_render.append(render)
+        else:
+            break
+
+    suma_altos = 0
+    for render in texto_render:
+        suma_altos += render.get_height()
+    y_inicial = rect.centery - (suma_altos // 2)
+
+    for render in texto_render:
+        texto_rect = render.get_rect(center=(rect.centerx, y_inicial))
+        pantalla.blit(render, texto_rect)
+        y_inicial += render.get_height()
+
+    return rect
+
+def dividir_texto_en_lineas(texto, max_caracteres):
+    lineas = []
+    linea = ""
+    palabras = texto.split()
+
+    for palabra in palabras:
+        if len(linea) + len(palabra) + 1 <= max_caracteres:
+            if linea == "":
+                linea = palabra
+            else:
+                linea = linea + " " + palabra
+        else:
+            lineas.append(linea)
+            linea = palabra
+
+    lineas.append(linea)
+    return "\n".join(lineas)
 
 def ubicar_boton(pantalla:pg.Surface, porcentaje_x:int, porcentaje_y:int, porcentaje_ancho:int, porcentaje_alto:int):
     """D"""

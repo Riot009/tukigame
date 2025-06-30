@@ -10,6 +10,8 @@ musica_iniciada = False
 pantalla_principal = True
 pantalla_jugar = False
 pantalla_puntaje = False
+mostrar_fondo_correcto = False
+mostrar_fondo_incorrecto = False
 
 
 preguntas = []
@@ -17,10 +19,12 @@ pregunta_actual = 0
 respuesta_correcta = ""
 opciones = []
 boton_respuesta = []
+seleccionada = None
+mostrar_resultado = False
+tiempo_espera = 0
 
 while True:
     if pantalla_principal == True:
-    #eventos
         for evento in pg.event.get():
             if evento.type == pg.QUIT:
                 pg.quit()
@@ -46,8 +50,7 @@ while True:
                 if boton_salir.collidepoint(mouse_pos):
                     pg.quit()
                     quit()
-                    
-                    #break
+
             
         #pantalla
         pantalla.fill(COLOR_FONDO) # color fondo
@@ -65,25 +68,25 @@ while True:
             if evento.type == pg.QUIT:
                 pg.quit()
                 quit()
+
             if evento.type == pg.MOUSEBUTTONDOWN:
                 mouse_pos = evento.pos
+
                 if boton_atras.collidepoint(mouse_pos):
                     pantalla_principal = True
                     pantalla_jugar = False
-                else:
+
+                elif not mostrar_resultado:  # Solo permite clic si no está mostrando resultado
                     for i in range(len(boton_respuesta)):
                         if boton_respuesta[i].collidepoint(mouse_pos):
-                            if opciones[i] == respuesta_correcta:
-                                print("✅ Correcto")
+                            seleccionada = opciones[i]
+                            mostrar_resultado = True
+                            tiempo_espera = pg.time.get_ticks()
+                            if seleccionada == respuesta_correcta:
+                                mostrar_fondo_correcto = True
                             else:
-                                print("❌ Incorrecto")
+                                mostrar_fondo_incorrecto = True
 
-                            pregunta_actual += 1
-                            if pregunta_actual >= len(preguntas):
-                                print("Fin del juego")
-                                pantalla_jugar = False
-                                pantalla_principal = True
-                            break
                 if boton_mute.collidepoint(mouse_pos):
                     if not musica_pausada:
                         pg.mixer.music.pause()
@@ -96,22 +99,40 @@ while True:
             
 
         #pantalla       
-        pantalla.blit(imagen_jugar, (0,0))
+        if mostrar_fondo_correcto:
+            pantalla.blit(imagen_correcto, (0, 0))
+        elif mostrar_fondo_incorrecto:
+            pantalla.blit(imagen_incorrecto, (0, 0))
+        else:
+            pantalla.blit(imagen_jugar, (0, 0))
 
         if pregunta_actual < len(preguntas):
             pregunta_data = preguntas[pregunta_actual]
             texto_pregunta = pregunta_data["pregunta"]
-            opciones = pregunta_data["respuestas"]
             respuesta_correcta = pregunta_data["correcta"]
+
+            opciones = []
+            for op in pregunta_data["respuestas"]:
+                opcion_con_salto_linea = dividir_texto_en_lineas(op, 20)
+                opciones.append(opcion_con_salto_linea)
 
         #botones
 
-            pregunta = dibujar_boton(pantalla, COLOR_BLANCO, COLOR_FONDO, 0.50, 0.12, 0.4, 0.1, 0, 0, texto_pregunta)
+            pregunta = dibujar_boton(pantalla, COLOR_BLANCO, COLOR_FONDO, 0.50, 0.20, 0.4, 0.14, 0, 0, texto_pregunta)
 
-            boton_respuesta.append(dibujar_boton(pantalla, COLOR_BLANCO, COLOR_FONDO, 0.225, 0.37, 0.2, 0.1, 0, 0, opciones[0]))
-            boton_respuesta.append(dibujar_boton(pantalla, COLOR_BLANCO, COLOR_FONDO, 0.775, 0.37, 0.2, 0.1, 0, 0, opciones[1]))
-            boton_respuesta.append(dibujar_boton(pantalla, COLOR_BLANCO, COLOR_FONDO, 0.225, 0.62, 0.2, 0.1, 0, 0, opciones[2]))
-            boton_respuesta.append(dibujar_boton(pantalla, COLOR_BLANCO, COLOR_FONDO, 0.775, 0.62, 0.2, 0.1, 0, 0, opciones[3]))
+            boton_respuesta.clear()
+            colores = [COLOR_BLANCO] * 4
+            if mostrar_resultado:
+                for i in range(4):
+                    if opciones[i] == respuesta_correcta:
+                        colores[i] = COLOR_VERDE
+                    elif opciones[i] == seleccionada:
+                        colores[i] = COLOR_ROJO
+
+            boton_respuesta.append(dibujar_boton(pantalla, colores[0], COLOR_FONDO, 0.225, 0.35, 0.2, 0.14, 0, 0, opciones[0]))
+            boton_respuesta.append(dibujar_boton(pantalla, colores[1], COLOR_FONDO, 0.775, 0.35, 0.2, 0.14, 0, 0, opciones[1]))
+            boton_respuesta.append(dibujar_boton(pantalla, colores[2], COLOR_FONDO, 0.225, 0.61, 0.2, 0.14, 0, 0, opciones[2]))
+            boton_respuesta.append(dibujar_boton(pantalla, colores[3], COLOR_FONDO, 0.775, 0.61, 0.2, 0.14, 0, 0, opciones[3]))
 
         boton_comodin1 = dibujar_boton(pantalla, COLOR_BLANCO, COLOR_FONDO, 0.175, 0.87, 0.2, 0.08, 0, 0, "comodin 1")
         boton_comodin2 = dibujar_boton(pantalla, COLOR_BLANCO, COLOR_FONDO, 0.50, 0.87, 0.2, 0.08, 0, 0, "comodin 2")
@@ -133,6 +154,21 @@ while True:
             
             
         pantalla.blit(imagen_puntaje, (0,0))
+
+    
+    if mostrar_resultado:
+        tiempo_actual = pg.time.get_ticks()
+        if tiempo_actual - tiempo_espera >= 2000:  # 2 segundos
+            pregunta_actual += 1
+            mostrar_resultado = False
+            seleccionada = None
+            mostrar_fondo_correcto = False
+            mostrar_fondo_incorrecto = False
+
+            if pregunta_actual >= len(preguntas):
+                print("Fin del juego")
+                pantalla_jugar = False
+                pantalla_principal = True
 
     pg.display.update()
 

@@ -204,45 +204,48 @@ def calcular_puntaje(tiempos_respuesta, respuestas_correctas):
 
     return puntos
 
+
 def registrar_puntaje_csv(nombre_jugador, tiempo_total_ms, respuestas_correctas, total_preguntas, puntaje_total, ruta_csv=RUTA_PUNTAJES):
-    """
-    Guarda el puntaje del jugador en un archivo CSV (sin usar el módulo csv).
-    Cada fila es: Nombre,Tiempo total,Porcentaje de respuestas correctas,Puntaje total
-    """
     tiempo_segundos = tiempo_total_ms // 1000
     minutos = tiempo_segundos // 60
     segundos = tiempo_segundos % 60
     tiempo_formateado = f"{minutos:02}:{segundos:02}"
 
     if total_preguntas > 0:
+        porcentaje_correctas = 0
         porcentaje_correctas = round((respuestas_correctas / total_preguntas) * 100)
     else:
         porcentaje_correctas = 0
 
-    encabezado = "Nombre,Tiempo total,Porcentaje de respuestas correctas,Puntaje total\n"
-    fila = (
-        str(nombre_jugador) + "," +
-        str(tiempo_formateado) + "," +
-        str(porcentaje_correctas) + "%," +
-        str(puntaje_total) + "\n"
-    )
+    nueva_fila = {
+        "Nombre": nombre_jugador,
+        "Tiempo total": tiempo_formateado,
+        "Porcentaje": f"{porcentaje_correctas}%",
+        "Puntaje": puntaje_total
+    }
+
+    puntajes = leer_top_puntajes(ruta_csv, top=1000)
+    actualizado = False
+
+    for i in range(len(puntajes)):
+        if puntajes[i]["Nombre"].lower() == nombre_jugador.lower():
+            if puntaje_total > puntajes[i]["Puntaje"]:
+                puntajes[i] = nueva_fila
+            actualizado = True
+            break
+
+    if not actualizado:
+        puntajes.append(nueva_fila)
+
+
+    puntajes.sort(key=lambda x: x["Puntaje"], reverse=True)
 
     try:
-        escribir_encabezado = False
-        try:
-            archivo = open(ruta_csv, "r", encoding="utf-8")
-            primera_linea = archivo.readline()
-            archivo.close()
-            if primera_linea == "":
-                escribir_encabezado = True
-        except FileNotFoundError:
-            escribir_encabezado = True
-
-        archivo = open(ruta_csv, "a", encoding="utf-8")
-        if escribir_encabezado:
-            archivo.write(encabezado)
-        archivo.write(fila)
-        archivo.close()
+        with open(ruta_csv, "w", encoding="utf-8") as archivo:
+            archivo.write("Nombre,Tiempo total,Porcentaje de respuestas correctas,Puntaje total\n")
+            for fila in puntajes:
+                linea = f'{fila["Nombre"]},{fila["Tiempo total"]},{fila["Porcentaje"]},{fila["Puntaje"]}\n'
+                archivo.write(linea)
     except Exception as e:
         print(f"Error al guardar puntaje: {e}")
 

@@ -12,6 +12,7 @@ pantalla_opciones = False
 pantalla_version = False
 mostrar_fondo_correcto = False
 mostrar_fondo_incorrecto = False
+musica_principal_iniciada = False
 
 
 
@@ -34,13 +35,21 @@ tiempos_respuesta = []
 respuestas_correctas = []
 opciones_ocultas = []
 comodin_usado = False
+tiempo_total = None
+archivo = open("datos.json", "r")
+todas = json.load(archivo)
+archivo.close()
+tiempo_en_pausa = 0
+pausando_tiempo = False
+pausa_duracion_total = 0
+duracion_pausas = 0
 
 
 pantalla = inicializar_pantalla(resolucion)
 
 nombre_jugador = ""
 ingresando_nombre = False
-input_box = pg.Rect(pantalla.get_width() * 0.35, pantalla.get_height() * 0.45, 250, 50)
+#input_box = pg.Rect(pantalla.get_width() * 0.35, pantalla.get_height() * 0.45, 250, 50)
 color_inactivo = (200, 200, 200)
 color_activo = (255, 255, 255)
 color = color_inactivo
@@ -48,16 +57,22 @@ activo = False
 texto_input = ""
 
 while True:
-    if pantalla_principal == True:
+    if pantalla_principal == True:       
         for evento in pg.event.get():
             if evento.type == pg.QUIT:
                 pg.quit()
                 quit()
-            if evento.type == pg.MOUSEBUTTONDOWN:
+            
+            if not musica_principal_iniciada:
+                reproducir_sonido(RUTA_SONIDO_PRINCIPAL, 1, -1)
+                musica_principal_iniciada = True
+                musica_juego_iniciada = False
+
+            if evento.type == pg.MOUSEBUTTONDOWN: 
                 mouse_pos = evento.pos
                 if boton_jugar.collidepoint(mouse_pos):
                     ingresando_nombre = True
-                    texto_input = ""                   
+                    texto_input = ""                  
 
 
                 if boton_puntaje.collidepoint(mouse_pos):
@@ -110,6 +125,8 @@ while True:
                     pg.mixer_music.stop()                   
                     musica_juego_pausada = True
                     musica_juego_iniciada = False
+                    musica_principal_iniciada = False
+                    comodin_usado = False
 
                 elif not mostrar_resultado:  # Solo permite clic si no está mostrando resultado
                     for i in range(len(boton_respuesta)):
@@ -117,7 +134,8 @@ while True:
                             seleccionada = opciones[i]
                             mostrar_resultado = True
                             tiempo_espera = pg.time.get_ticks()
-                            tiempo_respuesta = tiempo_espera - tiempo_inicio
+                            # Ajustar tiempo de respuesta descontando pausas
+                            tiempo_respuesta = tiempo_espera - tiempo_inicio 
                             tiempos_respuesta.append(tiempo_respuesta)
                             es_correcta = seleccionada == respuesta_correcta
                             respuestas_correctas.append(es_correcta)
@@ -139,6 +157,11 @@ while True:
                     opciones_ocultas = comodin_ocultar(opciones, respuesta_correcta)
                     comodin_usado = True
 
+                if boton_comodin2.collidepoint(mouse_pos) and not comodin_usado:
+                    cambiar_pregunta(todas,preguntas, pregunta_actual)
+                    comodin_usado = True
+                    seleccionada = None
+                    mostrar_resultado = False
 
             
 
@@ -183,11 +206,11 @@ while True:
                 else:
                     boton_respuesta.append(pg.Rect(0, 0, 0, 0))
 
-        boton_comodin1 = dibujar_boton(pantalla, COLOR_BLANCO, COLOR_FONDO, 0.175, 0.87, 0.2, 0.08, 0, 0, "comodin 1")
-        boton_comodin2 = dibujar_boton(pantalla, COLOR_BLANCO, COLOR_FONDO, 0.50, 0.87, 0.2, 0.08, 0, 0, "comodin 2")
-        boton_comodin3 = dibujar_boton(pantalla, COLOR_BLANCO, COLOR_FONDO, 0.825, 0.87, 0.2, 0.08, 0, 0, "comodin 3")
+        boton_comodin1 = dibujar_boton(pantalla, COLOR_BLANCO, COLOR_FONDO, 0.175, 0.87, 0.2, 0.08, 0, 0, "50/50")
+        boton_comodin2 = dibujar_boton(pantalla, COLOR_BLANCO, COLOR_FONDO, 0.50, 0.87, 0.2, 0.08, 0, 0, "Cambiar Pregunta.")
+        boton_comodin3 = dibujar_boton(pantalla, COLOR_BLANCO, COLOR_FONDO, 0.825, 0.87, 0.2, 0.08, 0, 0, "Que venga el amigo!")
 
-        boton_contador = dibujar_reloj(pantalla, tiempo_inicio)
+        boton_contador = dibujar_reloj(pantalla, tiempo_total)
 
         boton_atras = dibujar_boton(pantalla, COLOR_BLANCO, COLOR_FONDO, 0.06, 0.08, 0.09, 0.09, 0, 0, "<---")
 
@@ -389,9 +412,12 @@ while True:
                             pantalla_jugar = True
                             preguntas = cargar_preguntas("datos.json", cantidad=10)
                             pregunta_actual = 0
+                            opciones_ocultas = []
+                            comodin_usado = False
                             pantalla_principal = False
                             pantalla_jugar = True
-                            tiempo_inicio = pg.time.get_ticks()                            
+                            tiempo_inicio = pg.time.get_ticks()
+                            tiempo_total = pg.time.get_ticks()                            
                             if not musica_juego_iniciada:
                                 reproducir_sonido(RUTA_SONIDO_JUEGO,1,-1)
                                 musica_juego_iniciada = True
@@ -403,12 +429,17 @@ while True:
                             texto_input += evento.unicode
 
         pantalla.fill(COLOR_FONDO)
-        pantalla.blit(imagen_fondo, (0,0))
+        pantalla.blit(rescalar_imagen(imagen_fondo,pantalla), (0,0))
         mensaje = "Ingrese su nombre y presione Enter:"
-        fuente = pg.font.Font(RUTA_FUENTE, 32)
+        fuente = pg.font.Font(RUTA_FUENTE, 15)
         txt_surface = fuente.render(mensaje, True, COLOR_BLANCO)
         pantalla.blit(txt_surface, (pantalla.get_width() // 2 - txt_surface.get_width() // 2, pantalla.get_height() // 2 - 80))
         # Caja de texto
+        input_box_ancho = pantalla.get_width() * 0.3
+        input_box_alto = pantalla.get_height() * 0.08
+        input_box_x = pantalla.get_width() * 0.5 - input_box_ancho / 2
+        input_box_y = pantalla.get_height() * 0.5 - input_box_alto / 2
+        input_box = pg.Rect(input_box_x, input_box_y, input_box_ancho, input_box_alto)
         pg.draw.rect(pantalla, color, input_box, 2)
         input_surface = fuente.render(texto_input, True, COLOR_BLANCO)
         pantalla.blit(input_surface, (input_box.x + 5, input_box.y + 10))

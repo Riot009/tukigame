@@ -6,7 +6,7 @@ import os
 
 def inicializar_pantalla(tam:tuple)->pg.Surface:
     """D"""
-    pantalla = pg.display.set_mode(tam)
+    pantalla = pg.display.set_mode(tam, pg.RESIZABLE)
     return pantalla
 
 
@@ -119,11 +119,11 @@ def cronometro_juego()-> int:
     pg.time.set_timer(evento_tick, un_segundo)
     return evento_tick
 
-def dibujar_reloj(pantalla, tiempo_inicio):
+def dibujar_reloj(pantalla, tiempo_inicio, duracion_pausas=0):
     # Esta función puede estar fuera del bucle principal
     if tiempo_inicio is not None:
         tiempo_actual = pg.time.get_ticks()
-        tiempo_transcurrido = (tiempo_actual - tiempo_inicio) // 1000  # en segundos
+        tiempo_transcurrido = (tiempo_actual - tiempo_inicio - duracion_pausas) // 1000  # en segundos
         minutos = tiempo_transcurrido // 60
         segundos = tiempo_transcurrido % 60
         texto_tiempo = f"{minutos:02}:{segundos:02}"
@@ -185,10 +185,12 @@ def calcular_puntaje(tiempos_respuesta, respuestas_correctas):
     # 3 puntos por cada respuesta correcta en menos de 20 segundos
     puntos = 0
     for correcto, tiempo in zip(respuestas_correctas, tiempos_respuesta):
-        if (correcto and tiempo > 10000) and (correcto and tiempo < 20000):
+        if (correcto and tiempo >= 10000) and (correcto and tiempo <= 20000):
             puntos += 150
         elif correcto and tiempo < 10000:
             puntos += 300
+        elif correcto and tiempo > 20000:
+            puntos += 50
 
     return puntos
 
@@ -283,3 +285,47 @@ def comodin_ocultar(opciones, respuesta_correcta):
         return [indice1, indice2]
     
     return []
+
+def preguntas_sin_usar(todas, seleccionadas)->list:
+    sin_usar = []
+    for i in todas:
+        pregunta_usada = False
+        for j in seleccionadas:
+            if i["pregunta"] == j["pregunta"]:
+                pregunta_usada = True
+        if pregunta_usada == False:
+            sin_usar.append(i)
+
+    return sin_usar
+
+
+def cambiar_pregunta(todas, preguntas, pregunta_actual):
+    sin_usar = preguntas_sin_usar(todas, preguntas)
+
+    nueva_pregunta = sin_usar[random.randint(0, len(sin_usar) - 1)]
+
+    # Reordenar las respuestas manualmente
+    respuestas = [nueva_pregunta["r_1"], nueva_pregunta["r_2"], nueva_pregunta["r_3"], nueva_pregunta["r_4"]]
+
+    respuestas_mezcladas = []
+    usados = []
+    while len(respuestas_mezcladas) < 4:
+        i = random.randint(0, 3)
+        if i not in usados:
+            respuestas_mezcladas.append(respuestas[i])
+            usados.append(i)
+
+    preguntas[pregunta_actual] = {
+        "pregunta": nueva_pregunta["pregunta"],
+        "respuestas": respuestas_mezcladas,
+        "correcta": nueva_pregunta["correcta"]
+    }
+
+
+def tiempo_total(tiempo_total_ms):
+    tiempo_segundos = tiempo_total_ms // 1000
+    minutos = tiempo_segundos // 60
+    segundos = tiempo_segundos % 60
+    tiempo_formateado = f"{minutos:02}:{segundos:02}"
+
+    return tiempo_formateado

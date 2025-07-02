@@ -37,7 +37,7 @@ tiempo_espera = 0
 tiempo_inicio = None
 resolucion = (800,600)
 indice_resolucion = 0
-texto_resolucion = lista_a_string(resolucion)
+texto_resolucion = lista_a_string(resolucion, 'x')
 contador_volumen = 10
 incorrectas = 0
 puntaje = 0
@@ -442,7 +442,7 @@ while True:
                         indice_resolucion = 0
                     resolucion = LISTA_RESOLUCIONES[indice_resolucion]
                     pantalla = inicializar_pantalla(resolucion)
-                    texto_resolucion = lista_a_string(resolucion)
+                    texto_resolucion = lista_a_string(resolucion, 'x')
 
                 if boton_atras.collidepoint(mouse_pos):
                     pantalla_principal = True

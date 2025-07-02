@@ -90,25 +90,35 @@ def ubicar_boton(pantalla:pg.Surface, porcentaje_x:int, porcentaje_y:int, porcen
     return boton
 
 
-def cargar_preguntas(ruta_archivo:str, cantidad:int=10)->list:
-    
-    archivo = open(ruta_archivo, "r")
-    todas = json.load(archivo)
-    archivo.close()
+def cargar_preguntas(ruta_archivo: str, cantidad: int = 10) -> list:
+    with open(ruta_archivo, "r") as archivo:
+        todas = json.load(archivo)
 
-    seleccionadas = random.sample(todas, k=cantidad)
+    indices_usados = []
     preguntas_formateadas = []
 
-    
+    while len(preguntas_formateadas) < cantidad:
+        i = random.randint(0, len(todas) - 1)
+        if i not in indices_usados:
+            indices_usados.append(i)
+            p = todas[i]
 
-    for p in seleccionadas:
-        respuestas = [p["r_1"], p["r_2"], p["r_3"], p["r_4"]]
-        random.shuffle(respuestas)
-        preguntas_formateadas.append({
-            "pregunta": p["pregunta"],
-            "respuestas": respuestas,
-            "correcta": p["correcta"]
-        })
+            respuestas = [p["r_1"], p["r_2"], p["r_3"], p["r_4"]]
+
+            # Mezclar sin usar shuffle
+            respuestas_reordenadas = []
+            indices = []
+            while len(indices) < 4:
+                r = random.randint(0, 3)
+                if r not in indices:
+                    indices.append(r)
+                    respuestas_reordenadas.append(respuestas[r])
+
+            preguntas_formateadas.append({
+                "pregunta": p["pregunta"],
+                "respuestas": respuestas_reordenadas,
+                "correcta": p["correcta"]
+            })
 
     return preguntas_formateadas
 
@@ -329,3 +339,16 @@ def tiempo_total(tiempo_total_ms):
     tiempo_formateado = f"{minutos:02}:{segundos:02}"
 
     return tiempo_formateado
+
+def dibujar_encabezados(pantalla, encabezados, x_base, y, ancho_col, alto_fila):
+    for i, texto in enumerate(encabezados):
+        x_rel = x_base / pantalla.get_width() + (i + 0.5) * ancho_col
+        dibujar_boton(pantalla, COLOR_BLANCO, COLOR_FONDO, x_rel, y, ancho_col, alto_fila, 0, 0, texto)
+
+def dibujar_filas(pantalla, filas, x_base, y_base, ancho_col, alto_fila):
+    for idx, fila in enumerate(filas):
+        datos = [fila["Nombre"], fila["Tiempo total"], fila["Porcentaje"], str(fila["Puntaje"])]
+        y_rel = (y_base + idx * alto_fila + alto_fila / 2) / pantalla.get_height()
+        for i, texto in enumerate(datos):
+            x_rel = x_base / pantalla.get_width() + (i + 0.5) * ancho_col
+            dibujar_boton(pantalla, COLOR_BLANCO, COLOR_FONDO, x_rel, y_rel, ancho_col, alto_fila, 0, 0, texto)

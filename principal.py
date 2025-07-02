@@ -10,9 +10,15 @@ pantalla_jugar = False
 pantalla_puntaje = False
 pantalla_opciones = False
 pantalla_version = False
+pantalla_ganaste = False
+pantalla_perdiste = False
 mostrar_fondo_correcto = False
 mostrar_fondo_incorrecto = False
 musica_principal_iniciada = False
+sonido_ganaste = False
+sonido_perdiste = False
+sonido_shrek = False
+
 
 
 
@@ -39,10 +45,8 @@ tiempo_total = None
 archivo = open("datos.json", "r")
 todas = json.load(archivo)
 archivo.close()
-tiempo_en_pausa = 0
-pausando_tiempo = False
-pausa_duracion_total = 0
-duracion_pausas = 0
+preguntas_correctas = 0
+preguntas_incorrectas = 0
 
 
 pantalla = inicializar_pantalla(resolucion)
@@ -127,6 +131,17 @@ while True:
                     musica_juego_iniciada = False
                     musica_principal_iniciada = False
                     comodin_usado = False
+                    preguntas_incorrectas = 0
+                    preguntas_correctas = 0
+                    puntaje = 0
+                    tiempos_respuesta.clear()
+                    respuestas_correctas.clear()
+                    preguntas.clear()
+                    pregunta_actual = 0
+                    seleccionada = None
+                    mostrar_resultado = False
+                    mostrar_fondo_correcto = False
+                    mostrar_fondo_incorrecto = False
 
                 elif not mostrar_resultado:  # Solo permite clic si no está mostrando resultado
                     for i in range(len(boton_respuesta)):
@@ -134,16 +149,30 @@ while True:
                             seleccionada = opciones[i]
                             mostrar_resultado = True
                             tiempo_espera = pg.time.get_ticks()
-                            # Ajustar tiempo de respuesta descontando pausas
+                            pausando_tiempo = False
                             tiempo_respuesta = tiempo_espera - tiempo_inicio 
                             tiempos_respuesta.append(tiempo_respuesta)
                             es_correcta = seleccionada == respuesta_correcta
                             respuestas_correctas.append(es_correcta)
                             if seleccionada == respuesta_correcta:
+                                preguntas_correctas += 1
                                 mostrar_fondo_correcto = True
                             else:
-                                incorrectas += 1
+                                preguntas_incorrectas += 1
                                 mostrar_fondo_incorrecto = True
+
+                if boton_reiniciar.collidepoint(mouse_pos):
+                    puntaje = 0
+                    tiempos_respuesta.clear()
+                    respuestas_correctas.clear()
+                    pregunta_actual = 0
+                    seleccionada = None
+                    mostrar_resultado = False
+                    mostrar_fondo_correcto = False
+                    mostrar_fondo_incorrecto = False
+                    tiempo_inicio = pg.time.get_ticks()
+                    opciones_ocultas = []
+                    comodin_usado = False
 
                 if boton_mute.collidepoint(mouse_pos):
                     if not musica_juego_pausada:
@@ -215,6 +244,7 @@ while True:
         boton_atras = dibujar_boton(pantalla, COLOR_BLANCO, COLOR_FONDO, 0.06, 0.08, 0.09, 0.09, 0, 0, "<---")
 
         boton_mute = dibujar_boton(pantalla, COLOR_BLANCO, COLOR_FONDO, 0.94, 0.08, 0.09, 0.09, 0, 0, "mute")
+        boton_reiniciar = dibujar_boton(pantalla, COLOR_BLANCO, COLOR_FONDO, 0.5, 0.95, 0.18, 0.08, 0, 0, "REINICIAR")
 
         puntaje = calcular_puntaje(tiempos_respuesta, respuestas_correctas)
         boton_puntaje_actual = dibujar_boton(pantalla, COLOR_BLANCO, COLOR_FONDO, 0.5, 0.05, 0.18, 0.08, 0, 0, f"Puntaje: {puntaje}")
@@ -233,7 +263,18 @@ while True:
                 tiempo_inicio = pg.time.get_ticks()
 
             if pregunta_actual >= len(preguntas):
-                print("Fin del juego")
+
+                if preguntas_correctas >= 6:
+                    pantalla_ganaste = True
+                    pantalla_jugar = False
+                    
+                
+                elif preguntas_incorrectas >= 4:
+                    pantalla_perdiste = True
+                    pantalla_jugar = False
+                    
+
+                
                 # Calcular tiempo total de la partida
                 tiempo_total_ms = 0
                 for t in tiempos_respuesta:
@@ -254,14 +295,6 @@ while True:
                 pg.mixer_music.stop()
                 pantalla_jugar = False
                 pantalla_principal = True
-            elif incorrectas == 6:
-                incorrectas = 0
-                print("Perdiste")
-                pantalla_jugar = False
-                pantalla_principal = True
-                reproducir_sonido(RUTA_SONIDO_PERDER,0.40,1)
-                musica_juego_pausada = True
-                musica_juego_iniciada = False
 
 
 
@@ -278,35 +311,18 @@ while True:
 
         pantalla.blit(rescalar_imagen(imagen_puntaje,pantalla), (0,0))
 
-        # Leer y mostrar los 10 mejores puntajes
         top_puntajes = leer_top_puntajes()
-        x0 = pantalla.get_width() * 0.10
-        y0 = pantalla.get_height() * 0.18
-        ancho = pantalla.get_width() * 0.80
-        alto = pantalla.get_height() * 0.06
+        margen_izquierdo = pantalla.get_width() * 0.10
+        posicion_inicial_y = pantalla.get_height() * 0.25
+        ancho_tabla = pantalla.get_width() * 0.80
+        alto_fila = pantalla.get_height() * 0.06
 
         # Encabezados
         encabezados = ["Nombre", "Tiempo", "% Correctas", "Puntaje"]
-        for i, texto in enumerate(encabezados):
-            dibujar_boton(
-                pantalla, COLOR_BLANCO, COLOR_FONDO,
-                x0/ancho + (i+0.5)*0.2, 0.13, 0.18, 0.06, 0, 0, texto
-            )
+        dibujar_encabezados(pantalla, encabezados, margen_izquierdo, 0.18, 0.18, alto_fila)
 
         # Filas de puntajes
-        for idx, fila in enumerate(top_puntajes):
-            y = y0 + idx * alto
-            datos = [
-                fila["Nombre"],
-                fila["Tiempo total"],
-                fila["Porcentaje"],
-                str(fila["Puntaje"])
-            ]
-            for i, texto in enumerate(datos):
-                dibujar_boton(
-                    pantalla, COLOR_BLANCO, COLOR_FONDO,
-                    x0/ancho + (i+0.5)*0.2, (y + alto/2)/pantalla.get_height(), 0.18, 0.06, 0, 0, texto
-                )
+        dibujar_filas(pantalla, top_puntajes, margen_izquierdo, posicion_inicial_y, 0.18, alto_fila)
 
         # Botón para volver
         boton_volver = dibujar_boton(
@@ -411,13 +427,17 @@ while True:
                             pantalla_principal = False
                             pantalla_jugar = True
                             preguntas = cargar_preguntas("datos.json", cantidad=10)
+                            preguntas_correctas = 0
+                            preguntas_incorrectas = 0
                             pregunta_actual = 0
                             opciones_ocultas = []
                             comodin_usado = False
                             pantalla_principal = False
                             pantalla_jugar = True
+                            sonido_perdiste = False
+                            sonido_ganaste = False
                             tiempo_inicio = pg.time.get_ticks()
-                            tiempo_total = pg.time.get_ticks()                            
+                            tiempo_total = pg.time.get_ticks()                           
                             if not musica_juego_iniciada:
                                 reproducir_sonido(RUTA_SONIDO_JUEGO,1,-1)
                                 musica_juego_iniciada = True
@@ -445,7 +465,73 @@ while True:
         pantalla.blit(input_surface, (input_box.x + 5, input_box.y + 10))
         pg.display.update()
 
+    if pantalla_ganaste == True:
+        for evento in pg.event.get():
+            if evento.type == pg.QUIT:
+                pg.quit()
+                quit()
+
+            if evento.type == pg.MOUSEBUTTONDOWN:
+                if boton_atras.collidepoint(mouse_pos):
+                    pantalla_ganaste = False
+                    pantalla_principal = True
+
+        pantalla.fill(COLOR_FONDO)
+        pantalla.blit(rescalar_imagen(imagen_fondo,pantalla), (0,0))        
+        if not sonido_ganaste:
+            reproducir_sonido(RUTA_SONIDO_GANAR, 1, 1)
+            musica_principal_iniciada = False
+            sonido_ganaste = True
     
+        boton_atras = dibujar_boton(pantalla, COLOR_BLANCO, COLOR_FONDO, 0.06, 0.08, 0.09, 0.09, 0, 0, "<---")
+        boton_ganaste = dibujar_boton(pantalla, COLOR_BLANCO,COLOR_FONDO, 0.50, 0.15, 0.30, 0.30, 0, 0, 'Ganaste!')
+
+        top_puntajes = leer_top_puntajes()
+        margen_izquierdo = pantalla.get_width() * 0.10
+        posicion_inicial_y = pantalla.get_height() * 0.35
+        ancho_tabla = pantalla.get_width() * 0.80
+        alto_fila = pantalla.get_height() * 0.06
+
+        # Encabezados
+        encabezados = ["Nombre", "Tiempo", "% Correctas", "Puntaje"]
+        dibujar_encabezados(pantalla, encabezados, margen_izquierdo, 0.25, 0.18, alto_fila)
+
+        # Filas de puntajes
+        dibujar_filas(pantalla, top_puntajes, margen_izquierdo, posicion_inicial_y, 0.18, alto_fila)
+
+
+    if pantalla_perdiste == True:
+        for evento in pg.event.get():
+            if evento.type == pg.QUIT:
+                pg.quit()
+                quit()
+            if evento.type == pg.MOUSEBUTTONDOWN:
+                if boton_atras.collidepoint(mouse_pos):
+                    pantalla_perdiste = False
+                    pantalla_principal = True
+
+        pantalla.fill(COLOR_FONDO)
+        pantalla.blit(rescalar_imagen(imagen_fondo,pantalla), (0,0))        
+        if not sonido_perdiste:
+            reproducir_sonido(RUTA_SONIDO_PERDER, 1, 1)
+            musica_principal_iniciada = False
+            sonido_perdiste = True
+    
+        boton_atras = dibujar_boton(pantalla, COLOR_BLANCO, COLOR_FONDO, 0.06, 0.08, 0.09, 0.09, 0, 0, "<---")
+        boton_perdiste = dibujar_boton(pantalla, COLOR_BLANCO,COLOR_FONDO, 0.50, 0.15, 0.30, 0.30, 0, 0, 'perdiste!')
+
+        top_puntajes = leer_top_puntajes()
+        margen_izquierdo = pantalla.get_width() * 0.10
+        posicion_inicial_y = pantalla.get_height() * 0.35
+        ancho_tabla = pantalla.get_width() * 0.80
+        alto_fila = pantalla.get_height() * 0.06
+
+        # Encabezados
+        encabezados = ["Nombre", "Tiempo", "% Correctas", "Puntaje"]
+        dibujar_encabezados(pantalla, encabezados, margen_izquierdo, 0.25, 0.18, alto_fila)
+
+        # Filas de puntajes
+        dibujar_filas(pantalla, top_puntajes, margen_izquierdo, posicion_inicial_y, 0.18, alto_fila)
 
 
     pg.display.update()

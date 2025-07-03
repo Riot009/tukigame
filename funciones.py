@@ -12,9 +12,7 @@ def inicializar_pantalla(tam:tuple)->pg.Surface:
     return pantalla
 
 
-def dibujar_boton(pantalla: pg.Surface, color_texto: tuple, _color_borde: tuple,
-                  pr_x: float, pr_y: float, pr_ancho: float, pr_alto: float,
-                  _ancho_borde: int, _borde: int, texto: str = "") -> pg.Rect:
+def dibujar_boton(pantalla: pg.Surface, color_texto: tuple, _color_borde: tuple,pr_x: float, pr_y: float, pr_ancho: float, pr_alto: float,_ancho_borde: int, _borde: int, texto: str = "") -> pg.Rect:
     
     '''La funcion crea un boton con un tamaño, y texto ingresado por el usuario.\n
     se le debe pasar como parametro:\n
@@ -77,7 +75,10 @@ def dibujar_boton(pantalla: pg.Surface, color_texto: tuple, _color_borde: tuple,
 
     return rect
 
-def dividir_texto_en_lineas(texto, max_caracteres):
+def dividir_texto_en_lineas(texto:str, max_caracteres:str)->str:
+    '''La funcion divide el texto por linea.\n
+    se le debe pasar por parametro el texto y la cantidad maxima de caracteres por linea.\n
+    Retorna el texto con los salto de lineas.'''
     lineas = []
     linea = ""
     palabras = texto.split()
@@ -148,53 +149,19 @@ def cargar_preguntas(ruta_archivo: str, cantidad: int = 10) -> list:
 
     return preguntas_formateadas
 
-def cronometro_juego()-> int:
-    """La funcion crea un cronometro\n
-    no reiquiere de parametros\n
-    devuelve el cronometro."""
-    evento_tick = pg.USEREVENT + 1
-    un_segundo = 1000
-    pg.time.set_timer(evento_tick, un_segundo)
-    return evento_tick
 
-# def dibujar_reloj(pantalla, tiempo_inicio):
-#     '''la funcion dibuja un cronometro en pantalla.\n
-#     se le debe pasar como parametro la pantalla, el tiempo de donde va a iniciar el reloj\n
-#     retorna un boton con el cronometro como texto.'''
-#     if tiempo_inicio is not None:
-#         tiempo_actual = pg.time.get_ticks()
-#         tiempo_transcurrido = (tiempo_actual - tiempo_inicio) // 1000  # en segundos
-#         minutos = tiempo_transcurrido // 60
-#         segundos = tiempo_transcurrido % 60
-#         texto_tiempo = f"{minutos:02}:{segundos:02}"
-#     else:
-#         texto_tiempo = "00:00"
-#     return dibujar_boton(pantalla, COLOR_BLANCO, COLOR_FONDO, 0.50, 0.75, 0.1, 0.1, 0, 0, texto_tiempo)
-# def contar_tiempo_preguntas(segundos_actual, inicio_pregunta, lista_preguntas:list)->list:
-#     """Calcula cuánto tiempo tardó en responder una pregunta y lo agrega a la lista.
-#     Args:
-#         segundos_actual(int): Tiempo actual del cronómetro.
-#         inicio_pregunta(int): Tiempo cuando empezó la pregunta.
-#         lista_preguntas(list): Lista acumulada de tiempos por pregunta.
-#     Returns:
-#         lista_preguntas(list): Lista actualizada con el nuevo tiempo."""
-#     tiempo_respuesta = segundos_actual - inicio_pregunta
-#     if tiempo_respuesta == 0:
-#         tiempo_respuesta = 1
-#     lista_preguntas.append(tiempo_respuesta)
-
-#     return lista_preguntas
-
-
-def calcular_puntaje(total_puntajes,segundo_puntaje,puntaje_base:int=60)->int:
+def calcular_puntaje(puntaje:int,segundo_puntaje:int)->int:
+    '''La funcion calcula el bonus de puntaje.\n
+    se le debe pasar por parametro el puntaje, y la cantidad de tiempo que tardo en contestar la pregunta.\n
+    Retorna un int.'''
 
     if segundo_puntaje <= 20:
-        total_puntajes += 3 
+        puntaje += 3 
     else:
-        total_puntajes = total_puntajes
-    return total_puntajes
+        puntaje = puntaje
+    return puntaje
 
-def rescalar_imagen(imagen, pantalla):
+def rescalar_imagen(imagen:pg.image, pantalla:pg.surface)->pg.image:
     '''La funcion rescala imagenes al tamaño actual de la pantalla.\n
     se le debe pasar como parametro la imagen a rescalar y la pantalla.\n
     retorna la imagen ya rescalada.'''
@@ -215,7 +182,7 @@ def lista_a_string(lista:list,sep:str)->str:
     return resultado
 
 
-def reproducir_sonido(sonido,volumen,loops):
+def reproducir_sonido(sonido:pg.mixer.Sound , volumen: int , loops:int )->None:
     '''La funcion carga y reproduce sonidos.\n
     se le debe pasar como parametros la ruta del sonido, el volumen deseado, y la cantidad de veces que se reproduce el sonido(-1 para que sea infinito.)\n
     No posee retorno.'''
@@ -223,7 +190,7 @@ def reproducir_sonido(sonido,volumen,loops):
     pg.mixer_music.set_volume(volumen)
     pg.mixer_music.play(loops)
 
-def dividir_pregunta_en_lineas(texto, palabras_por_linea=11):
+def dividir_pregunta_en_lineas(texto:str, palabras_por_linea:str=11):
     '''La funcion divide el texto de las preguntar con saltos de linea.\n
     se le pasar como parametro la pregunta y la cantidad de palabras que se desean por linea.\n
     retorna la pregunta con los saltos de linea.'''
@@ -237,76 +204,11 @@ def dividir_pregunta_en_lineas(texto, palabras_por_linea=11):
     else:
         return texto
     
-def dividir_texto_en_lineas(texto, max_caracteres):
-    '''La funcion divide el texto con saltos de linea.\n
-    se le pasar como parametro el texto y la cantidad maxima de caracteres por linea.\n
-    retorna el texto con los saltos de linea.'''
-    lineas = []
-    linea = ""
-    palabras = texto.split()
 
-    for palabra in palabras:
-        if len(linea) + len(palabra) + 1 <= max_caracteres:
-            if linea == "":
-                linea = palabra
-            else:
-                linea = linea + " " + palabra
-        else:
-            lineas.append(linea)
-            linea = palabra
-
-    lineas.append(linea)
-    return "\n".join(lineas)
-
-
-
-
-# def registrar_puntaje_csv(nombre_jugador, minutos, segundos, respuestas_correctas, total_preguntas, puntaje_total, ruta_csv=RUTA_PUNTAJES):
-#     '''La funcion registra el nombre del jugador, tiempo total de juego, porcentaje de repuestas correctas y el puntaje del mismo dentro de un archivo csv.\n
-#     se le pasa como parametro: nombre del jugador, tiempo total en ms, la cantidad de respuestas corretas, el total de preguntas del juego, el puntaje realizado por el jugador\n
-#     y la ruta al archivo csv\n
-#     No tiene retorno.'''
-        
-#     tiempo_total = f"{minutos:02}:{segundos:02}"
-
-#     if total_preguntas > 0:
-#         porcentaje_correctas = 0
-#         porcentaje_correctas = round((respuestas_correctas / total_preguntas) * 100)
-#     else:
-#         porcentaje_correctas = 0
-
-#     nueva_fila = {
-#         "Nombre": nombre_jugador,
-#         "Tiempo total": tiempo_total,
-#         "Porcentaje": f"{porcentaje_correctas}%",
-#         "Puntaje": puntaje_total
-#     }
-
-#     puntajes = leer_top_puntajes(ruta_csv, top=1000)
-#     actualizado = False
-
-#     for i in range(len(puntajes)):
-#         if puntajes[i]["Nombre"].lower() == nombre_jugador.lower():
-#             if puntaje_total > puntajes[i]["Puntaje"]:
-#                 puntajes[i] = nueva_fila
-#             actualizado = True
-#             break
-
-#     if not actualizado:
-#         puntajes.append(nueva_fila)
-
-
-#     puntajes.sort(key=lambda x: x["Puntaje"], reverse=True)
-
-#     try:
-#         with open(ruta_csv, "w", encoding="utf-8") as archivo:
-#             archivo.write("Nombre,Tiempo total,Porcentaje de respuestas correctas,Puntaje total\n")
-#             for fila in puntajes:
-#                 linea = f'{fila["Nombre"]},{fila["Tiempo total"]},{fila["Porcentaje"]},{fila["Puntaje"]}\n'
-#                 archivo.write(linea)
-#     except Exception as e:
-#         print(f"Error al guardar puntaje: {e}")
-def calcular_porcentaje(preguntas_correctas):
+def calcular_porcentaje(preguntas_correctas:int)->int:
+    '''la funcion calcula el porcentaje de respuestas correctas sobre el total de preguntas.\n
+    se le debe pasar como parametro la cantidad de preguntas correctas.\n
+    Retorna un int.'''
     porcentaje_correctas = 0
     porcentaje_correctas = (preguntas_correctas * 100) // 10
     return porcentaje_correctas
@@ -369,7 +271,7 @@ def guardar_jugador_csv(respuestas_correctas,nombre:str, puntos:int, timer:str, 
     except Exception as e:
         print(f"No se pudo escribir el archivo: {e}")
 
-def leer_top_puntajes(respuestas_correctas,total_preguntas,ruta_csv=RUTA_PUNTAJES, top=10):
+def leer_top_puntajes(preguntas_correctas,preguntas,ruta_csv=RUTA_PUNTAJES, top=10):
     '''La funcion lee el archivo de puntajes y extrae los 10 primeros jugadores.\n
     se le pasa como parametro la ruta al archivo y la cantidad de jugadores a extraer.\n
     Retorna una lista.'''
@@ -399,7 +301,7 @@ def leer_top_puntajes(respuestas_correctas,total_preguntas,ruta_csv=RUTA_PUNTAJE
     return puntajes[:top]
 
     
-def comodin_ocultar(opciones, respuesta_correcta)->list:
+def comodin_ocultar(opciones:list, respuesta_correcta:list)->list:
     '''La funcion oculta dos respuesta incorrectas.\n
     se le debe pasar como parametro las respuestas, y la respuesta correcta.\n
     Retorna una lista.'''
@@ -416,7 +318,7 @@ def comodin_ocultar(opciones, respuesta_correcta)->list:
         return [indice1, indice2]
 
 
-def preguntas_sin_usar(todas, seleccionadas)->list:
+def preguntas_sin_usar(todas, seleccionadas:dict)->list:
     '''La funcion descubre cuales preguntas quedaron sin usar.\n
     se le pasa como parametro la lista con todas las preguntas y la lista con las preguntas ya utilizadas.\n
     retorna una lista.'''
@@ -432,7 +334,7 @@ def preguntas_sin_usar(todas, seleccionadas)->list:
     return sin_usar
 
 
-def cambiar_pregunta(todas, preguntas, pregunta_actual):
+def cambiar_pregunta(todas, preguntas:list, pregunta_actual:list)->None:
     '''La funcion cambia la pregunta actual.\n
     se le debe pasar como parametro: la lista de todas las preguntas, la lista de preguntas seleccionadas para el juego, y la pregunta actual.\n
     No retorna'''
@@ -458,7 +360,7 @@ def cambiar_pregunta(todas, preguntas, pregunta_actual):
     }
 
 
-def dibujar_encabezados(pantalla, encabezados, x_base, y, ancho_col, alto_fila):
+def dibujar_encabezados(pantalla:pg.surface, encabezados:list, x_base:int, y:int, ancho_col:int, alto_fila:int)->None:
     '''la funcion dibuja encabezados.\n
     se le pasa como parametro: pantalla, el encabezado a dibujar, la posicion en "x" y en "y", el ancho de las columnas y el alto de las filas\n
     No retorna.'''
@@ -466,7 +368,7 @@ def dibujar_encabezados(pantalla, encabezados, x_base, y, ancho_col, alto_fila):
         x_rel = x_base / pantalla.get_width() + (i + 0.5) * ancho_col
         dibujar_boton(pantalla, COLOR_BLANCO, COLOR_FONDO, x_rel, y, ancho_col, alto_fila, 0, 0, texto)
 
-def dibujar_filas(pantalla, filas, x_base, y_base, ancho_col, alto_fila):
+def dibujar_filas(pantalla:pg.surface, filas:list, x_base:int, y_base:int, ancho_col:int, alto_fila:int)->None:
     '''la funcion dibuja filas.\n
     se le debe pasar como parametro: pantalla, cantidad de filas, posicion en x, posicion en y, ancho de columna, alto de fila\n
     No retorna.'''

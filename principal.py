@@ -182,12 +182,18 @@ while True:
                                 puntos_totales = calcular_puntaje(puntos_totales, segundo_puntaje)
                                 segundo_puntaje = 0
                                 pg.time.set_timer(evento_tick,un_segundo)
+                                if not musica_juego_iniciada:
+                                    reproducir_sonido(RUTA_SONIDO_JUEGO, volumen, -1)
+                                    musica_juego_iniciada = True
+
                                     
                             else:
                                 preguntas_incorrectas += 1
                                 mostrar_fondo_incorrecto = True
-                                segundo_puntaje = 0
-                                
+                                segundo_puntaje = 0                               
+                                if not musica_juego_iniciada:
+                                    reproducir_sonido(RUTA_SONIDO_JUEGO, volumen, -1)
+                                    musica_juego_iniciada = True                               
 
                 if boton_reiniciar.collidepoint(mouse_pos):
                     respuestas_correctas.clear()
@@ -227,6 +233,8 @@ while True:
                     comodin_usado = True
                     seleccionada = None
                     mostrar_resultado = False
+                    reproducir_sonido(RUTA_SONIDO_SHREK, volumen, 1)
+                    musica_juego_iniciada = False
 
             
 
@@ -376,18 +384,20 @@ while True:
             if evento.type == pg.QUIT:
                 pg.quit()
                 quit()
-            if evento.key == pg.K_RETURN or evento.key == pg.K_ESCAPE:
-                
-                respuestas_correctas.clear()
-                preguntas.clear()
-                pregunta_actual = 0
-                seleccionada = None
-                mostrar_resultado = False
-                mostrar_fondo_correcto = False
-                mostrar_fondo_incorrecto = False
-                pantalla_ganaste = False
-                pantalla_principal = True
-                musica_principal_iniciada = False
+
+            if evento.type == pg.KEYDOWN:
+                if evento.key == pg.K_RETURN or evento.key == pg.K_ESCAPE:
+                    
+                    respuestas_correctas.clear()
+                    preguntas.clear()
+                    pregunta_actual = 0
+                    seleccionada = None
+                    mostrar_resultado = False
+                    mostrar_fondo_correcto = False
+                    mostrar_fondo_incorrecto = False
+                    pantalla_ganaste = False
+                    pantalla_principal = True
+                    musica_principal_iniciada = False
 
         pantalla.fill(COLOR_FONDO)
         pantalla.blit(rescalar_imagen(imagen_fondo,pantalla), (0,0))        
@@ -398,7 +408,7 @@ while True:
         boton_atras = dibujar_boton(pantalla, COLOR_BLANCO, COLOR_FONDO, 0.06, 0.08, 0.09, 0.09, 0, 0, "<---")
         boton_perdiste = dibujar_boton(pantalla, COLOR_BLANCO,COLOR_FONDO, 0.50, 0.15, 0.30, 0.30, 0, 0, 'perdiste!')
 
-        top_puntajes = leer_top_puntajes()
+        top_puntajes = leer_top_puntajes(respuestas_correctas,preguntas,ruta_csv=RUTA_PUNTAJES)
         margen_izquierdo = pantalla.get_width() * 0.10
         posicion_inicial_y = pantalla.get_height() * 0.35
         ancho_tabla = pantalla.get_width() * 0.80

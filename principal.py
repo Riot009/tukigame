@@ -23,13 +23,15 @@ pantalla_perdiste = False
 mostrar_fondo_correcto = False
 mostrar_fondo_incorrecto = False
 
-
+'''Variables de tiempo'''
 puntos = 0
 segundos = 0
 minutos = 0
 segundo_puntaje = 0
+tiempo_mostrar_resultado = None
+
+'''Variables Puntos y preguntas.'''
 puntos_totales = 0
-#minuto_puntaje = 0
 preguntas = []
 pregunta_actual = 0
 respuesta_correcta = ""
@@ -42,8 +44,6 @@ resolucion = (800,600)
 indice_resolucion = 0
 texto_resolucion = lista_a_string(resolucion, 'x')
 contador_volumen = 10
-incorrectas = 0
-puntaje = 0
 
 respuestas_correctas = []
 opciones_ocultas = []
@@ -127,6 +127,7 @@ while True:
             if evento.type == pg.QUIT:
                 pg.quit()
                 quit()
+
             if evento.type == evento_tick:
                 segundos += 1
                 segundo_puntaje += 1
@@ -154,7 +155,6 @@ while True:
                     comodin_usado = False
                     preguntas_incorrectas = 0
                     preguntas_correctas = 0
-                    puntaje = 0
                     puntos_totales = 0
                     
                     
@@ -171,6 +171,7 @@ while True:
                         if boton_respuesta[i].collidepoint(mouse_pos):
                             seleccionada = opciones[i]
                             mostrar_resultado = True
+                            tiempo_mostrar_resultado = pg.time.get_ticks()
                             
                             es_correcta = seleccionada == respuesta_correcta
                             respuestas_correctas.append(es_correcta)
@@ -181,8 +182,7 @@ while True:
                                 puntos_totales = calcular_puntaje(puntos_totales, segundo_puntaje)
                                 segundo_puntaje = 0
                                 pg.time.set_timer(evento_tick,un_segundo)
-
-                                
+                                    
                             else:
                                 preguntas_incorrectas += 1
                                 mostrar_fondo_incorrecto = True
@@ -190,8 +190,6 @@ while True:
                                 
 
                 if boton_reiniciar.collidepoint(mouse_pos):
-                    puntaje = 0
-                    
                     respuestas_correctas.clear()
                     pregunta_actual = 0
                     seleccionada = None
@@ -260,8 +258,12 @@ while True:
                 for i in range(4):
                     if opciones[i] == respuesta_correcta:
                         colores[i] = COLOR_VERDE
+                        pg.time.set_timer(evento_tick, 0)
+   
                     elif opciones[i] == seleccionada:
                         colores[i] = COLOR_ROJO
+                        pg.time.set_timer(evento_tick, 0)
+                        
                         
             pos_x = [0.225, 0.775, 0.225, 0.775]
             pos_y = [0.35, 0.35, 0.61, 0.61]
@@ -291,21 +293,21 @@ while True:
     
     if mostrar_resultado:
         tiempo_actual = pg.time.get_ticks()
-        
-        pregunta_actual += 1
-        mostrar_resultado = False
-        seleccionada = None
-        opciones_ocultas = []
-        mostrar_fondo_correcto = False
-        mostrar_fondo_incorrecto = False
-
+        if tiempo_actual - tiempo_mostrar_resultado >= 3000:
+            pregunta_actual += 1
+            mostrar_resultado = False
+            seleccionada = None
+            opciones_ocultas = []
+            mostrar_fondo_correcto = False
+            mostrar_fondo_incorrecto = False
+            tiempo_mostrar_resultado = None
+            pg.time.set_timer(evento_tick,un_segundo)        
 
         if pregunta_actual >= len(preguntas):
 
                 if preguntas_correctas >= 6:
                     pantalla_ganaste = True
                     pantalla_jugar = False
-                    puntos_totales = 0
                     segundos=0
                     segundo_puntaje=0
                     minutos=0
@@ -316,6 +318,7 @@ while True:
                     pantalla_jugar = False
                     
                 guardar_jugador_csv(preguntas_correctas,nombre_jugador, puntos_totales, timer)
+                puntos_totales = 0
                 pg.mixer_music.stop()
                 pantalla_jugar = False
                 pantalla_principal = True

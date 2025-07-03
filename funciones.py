@@ -186,12 +186,12 @@ def cronometro_juego()-> int:
 #     return lista_preguntas
 
 
-def calcular_puntaje(total_puntajes,segundos_puntajes,puntaje_base:int=60)->int:
+def calcular_puntaje(total_puntajes,segundo_puntaje,puntaje_base:int=60)->int:
 
-    if segundos_puntajes <= 20:
-        total_puntajes += puntaje_base + 3
+    if segundo_puntaje <= 20:
+        total_puntajes += 3 
     else:
-        total_puntajes += puntaje_base
+        total_puntajes = total_puntajes
     return total_puntajes
 
 def rescalar_imagen(imagen, pantalla):
@@ -275,53 +275,106 @@ def dividir_texto_en_lineas(texto, max_caracteres):
 #     return puntos
 
 
-def registrar_puntaje_csv(nombre_jugador, tiempo_total_ms, respuestas_correctas, total_preguntas, puntaje_total, ruta_csv=RUTA_PUNTAJES):
-    '''La funcion registra el nombre del jugador, tiempo total de juego, porcentaje de repuestas correctas y el puntaje del mismo dentro de un archivo csv.\n
-    se le pasa como parametro: nombre del jugador, tiempo total en ms, la cantidad de respuestas corretas, el total de preguntas del juego, el puntaje realizado por el jugador\n
-    y la ruta al archivo csv\n
-    No tiene retorno.'''
-    tiempo_segundos = tiempo_total_ms // 1000
-    minutos = tiempo_segundos // 60
-    segundos = tiempo_segundos % 60
-    tiempo_formateado = f"{minutos:02}:{segundos:02}"
+# def registrar_puntaje_csv(nombre_jugador, minutos, segundos, respuestas_correctas, total_preguntas, puntaje_total, ruta_csv=RUTA_PUNTAJES):
+#     '''La funcion registra el nombre del jugador, tiempo total de juego, porcentaje de repuestas correctas y el puntaje del mismo dentro de un archivo csv.\n
+#     se le pasa como parametro: nombre del jugador, tiempo total en ms, la cantidad de respuestas corretas, el total de preguntas del juego, el puntaje realizado por el jugador\n
+#     y la ruta al archivo csv\n
+#     No tiene retorno.'''
+        
+#     tiempo_total = f"{minutos:02}:{segundos:02}"
 
-    if total_preguntas > 0:
-        porcentaje_correctas = 0
-        porcentaje_correctas = round((respuestas_correctas / total_preguntas) * 100)
-    else:
-        porcentaje_correctas = 0
+#     if total_preguntas > 0:
+#         porcentaje_correctas = 0
+#         porcentaje_correctas = round((respuestas_correctas / total_preguntas) * 100)
+#     else:
+#         porcentaje_correctas = 0
 
-    nueva_fila = {
-        "Nombre": nombre_jugador,
-        "Tiempo total": tiempo_formateado,
-        "Porcentaje": f"{porcentaje_correctas}%",
-        "Puntaje": puntaje_total
-    }
+#     nueva_fila = {
+#         "Nombre": nombre_jugador,
+#         "Tiempo total": tiempo_total,
+#         "Porcentaje": f"{porcentaje_correctas}%",
+#         "Puntaje": puntaje_total
+#     }
 
-    puntajes = leer_top_puntajes(ruta_csv, top=1000)
-    actualizado = False
+#     puntajes = leer_top_puntajes(ruta_csv, top=1000)
+#     actualizado = False
 
-    for i in range(len(puntajes)):
-        if puntajes[i]["Nombre"].lower() == nombre_jugador.lower():
-            if puntaje_total > puntajes[i]["Puntaje"]:
-                puntajes[i] = nueva_fila
-            actualizado = True
+#     for i in range(len(puntajes)):
+#         if puntajes[i]["Nombre"].lower() == nombre_jugador.lower():
+#             if puntaje_total > puntajes[i]["Puntaje"]:
+#                 puntajes[i] = nueva_fila
+#             actualizado = True
+#             break
+
+#     if not actualizado:
+#         puntajes.append(nueva_fila)
+
+
+#     puntajes.sort(key=lambda x: x["Puntaje"], reverse=True)
+
+#     try:
+#         with open(ruta_csv, "w", encoding="utf-8") as archivo:
+#             archivo.write("Nombre,Tiempo total,Porcentaje de respuestas correctas,Puntaje total\n")
+#             for fila in puntajes:
+#                 linea = f'{fila["Nombre"]},{fila["Tiempo total"]},{fila["Porcentaje"]},{fila["Puntaje"]}\n'
+#                 archivo.write(linea)
+#     except Exception as e:
+#         print(f"Error al guardar puntaje: {e}")
+
+def guardar_jugador_csv(nombre:str, puntos:int, tiempo:str, ruta:str=RUTA_PUNTAJES):
+    """
+    Guarda o actualiza jugador en un csv de 10 mejores. Si existe, reemplaza sólo si el nuevo puntaje es mejor.
+    Args:
+        nombre(str): Nombre del jugador.
+        puntos(int): Cantidad de puntos.
+        tiempo(str): Tiempo jugado.
+        ruta(str): Ruta del CSV por Defaul Ruta del CSV del juego.
+    Returns:
+    """
+    if not nombre.strip():
+        pass
+
+    # Leer existentes
+    jugadores = []
+    try:
+        with open(ruta, "r") as archivo:
+            for linea in archivo:
+                datos = linea.strip().split(",")
+                if len(datos) == 3:
+                    jugadores.append({"nombre": datos[0], "puntos": int(datos[1]), "tiempo": datos[2]})
+    except FileNotFoundError:
+        print("Archivo no encontrado. Se creará nuevo.")
+
+    # Reemplazo o agregado
+    reemplazado = False
+    for j in jugadores:
+        if j["nombre"].lower() == nombre.lower():
+            if puntos > j["puntos"]:
+                print(f"Reemplazando puntaje de {nombre} por mayor puntaje")
+                j["puntos"] = puntos
+                j["tiempo"] = tiempo
+            else:
+                print(f"Puntaje de {nombre} no supera el anterior")
+            reemplazado = True
             break
 
-    if not actualizado:
-        puntajes.append(nueva_fila)
+    if not reemplazado:
+        print(f"Agregando nuevo jugador: {nombre}")
+        jugadores.append({"nombre": nombre, "puntos": puntos, "tiempo": tiempo})
 
+    # Ordenar
+    jugadores.sort(key=lambda x: x["puntos"], reverse=True)
+    jugadores = jugadores[:10]
 
-    puntajes.sort(key=lambda x: x["Puntaje"], reverse=True)
-
+    # Guardar
     try:
-        with open(ruta_csv, "w", encoding="utf-8") as archivo:
-            archivo.write("Nombre,Tiempo total,Porcentaje de respuestas correctas,Puntaje total\n")
-            for fila in puntajes:
-                linea = f'{fila["Nombre"]},{fila["Tiempo total"]},{fila["Porcentaje"]},{fila["Puntaje"]}\n'
+        with open(ruta, "w", encoding="utf-8") as archivo:
+            for j in jugadores:
+                linea = f"{j['nombre']},{j['puntos']},{j['tiempo']}\n"
                 archivo.write(linea)
+        print("Archivo guardado exitosamente.")
     except Exception as e:
-        print(f"Error al guardar puntaje: {e}")
+        print(f"No se pudo escribir el archivo: {e}")
 
 def leer_top_puntajes(ruta_csv=RUTA_PUNTAJES, top=10):
     '''La funcion lee el archivo de puntajes y extrae los 10 primeros jugadores.\n
@@ -332,18 +385,17 @@ def leer_top_puntajes(ruta_csv=RUTA_PUNTAJES, top=10):
         encabezado = archivo.readline()
         for linea in archivo:
             partes = linea.strip().split(",")
-            if len(partes) == 4:
+            if len(partes) == 3:
                 nombre = partes[0]
                 tiempo = partes[1]
-                porcentaje = partes[2]
+                
                 try:
-                    puntaje = int(partes[3])
+                    puntaje = int(partes[2])
                 except:
                     puntaje = 0
                 puntajes.append({
                     "Nombre": nombre,
                     "Tiempo total": tiempo,
-                    "Porcentaje": porcentaje,
                     "Puntaje": puntaje
                 })
     # Ordenar por puntaje descendente
@@ -428,7 +480,7 @@ def dibujar_filas(pantalla, filas, x_base, y_base, ancho_col, alto_fila):
     se le debe pasar como parametro: pantalla, cantidad de filas, posicion en x, posicion en y, ancho de columna, alto de fila\n
     No retorna.'''
     for idx, fila in enumerate(filas):
-        datos = [fila["Nombre"], fila["Tiempo total"], fila["Porcentaje"], str(fila["Puntaje"])]
+        datos = [fila["Nombre"], fila["Tiempo total"], str(fila["Puntaje"])]
         y_rel = (y_base + idx * alto_fila + alto_fila / 2) / pantalla.get_height()
         for i, texto in enumerate(datos):
             x_rel = x_base / pantalla.get_width() + (i + 0.5) * ancho_col

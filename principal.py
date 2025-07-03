@@ -130,12 +130,13 @@ while True:
             if evento.type == evento_tick:
                 segundos += 1
                 segundo_puntaje += 1
-                if segundo_puntaje >= 60:
-                    segundo_puntaje = 0
+                # if segundo_puntaje >= 60:
+                #     segundo_puntaje = 0
 
                 if segundos >= 60:
                     segundos = 0
                     minutos += 1
+                timer = f"{minutos:02}:{segundos:02}"
                     
 
             if evento.type == pg.MOUSEBUTTONDOWN:
@@ -174,9 +175,10 @@ while True:
                             if seleccionada == respuesta_correcta:
                                 preguntas_correctas += 1
                                 mostrar_fondo_correcto = True
-                                segundos_puntajes = 0
-                                puntos_totales = calcular_puntaje(puntos_totales, segundos_puntajes)
+                                puntos_totales +=60 
+                                puntos_totales = calcular_puntaje(puntos_totales, segundo_puntaje)
                                 segundo_puntaje = 0
+                                
                             else:
                                 preguntas_incorrectas += 1
                                 mostrar_fondo_incorrecto = True
@@ -295,7 +297,7 @@ while True:
                     pantalla_perdiste = True
                     pantalla_jugar = False
                     
-
+                guardar_jugador_csv(nombre_jugador, puntos_totales, timer)
                 pg.mixer_music.stop()
                 pantalla_jugar = False
                 pantalla_principal = True
@@ -338,7 +340,7 @@ while True:
         alto_fila = pantalla.get_height() * 0.06
 
         # Encabezados
-        encabezados = ["Nombre", "Tiempo", "% Correctas", "Puntaje"]
+        encabezados = ["Nombre", "Tiempo", "Puntaje"]
         dibujar_encabezados(pantalla, encabezados, margen_izquierdo, 0.25, 0.18, alto_fila)
 
         # Filas de puntajes
@@ -382,7 +384,7 @@ while True:
         alto_fila = pantalla.get_height() * 0.06
 
         # Encabezados
-        encabezados = ["Nombre", "Tiempo", "% Correctas", "Puntaje"]
+        encabezados = ["Nombre", "Tiempo", "Puntaje"]
         dibujar_encabezados(pantalla, encabezados, margen_izquierdo, 0.25, 0.18, alto_fila)
 
         # Filas de puntajes
@@ -410,7 +412,7 @@ while True:
         alto_fila = pantalla.get_height() * 0.06
 
         # Encabezados
-        encabezados = ["Nombre", "Tiempo", "% Correctas", "Puntaje"]
+        encabezados = ["Nombre", "Tiempo", "Puntaje"]
         dibujar_encabezados(pantalla, encabezados, margen_izquierdo, 0.18, 0.18, alto_fila)
 
         # Filas de puntajes

@@ -497,6 +497,7 @@ while True:
         boton_atras = dibujar_boton(pantalla, COLOR_BLANCO, COLOR_FONDO, 0.06, 0.08, 0.09, 0.09, 0, 0, "<---")
         boton_mute = dibujar_boton(pantalla, COLOR_BLANCO, COLOR_FONDO, 0.94, 0.08, 0.09, 0.09, 0, 0, "mute")
         boton_version = dibujar_boton(pantalla, COLOR_BLANCO, COLOR_FONDO, 0.90, 0.90, 0.09, 0.09, 0, 0, "Version:0.01")
+        boton_nombres = dibujar_boton(pantalla, COLOR_BLANCO, COLOR_FONDO, 0.50, 0.90, 0.09, 0.09, 0, 0, "JUEGO DESARROLLADO POR:\n\n*Diego Luciano Zabaleta\n\n*Martin Nicolas Torres\n\n*Franco Storgato")
 
 
     if pantalla_version == True:

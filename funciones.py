@@ -157,19 +157,50 @@ def cronometro_juego()-> int:
     pg.time.set_timer(evento_tick, un_segundo)
     return evento_tick
 
-def dibujar_reloj(pantalla, tiempo_inicio):
-    '''la funcion dibuja un cronometro en pantalla.\n
-    se le debe pasar como parametro la pantalla, el tiempo de donde va a iniciar el reloj\n
-    retorna un boton con el cronometro como texto.'''
-    if tiempo_inicio is not None:
-        tiempo_actual = pg.time.get_ticks()
-        tiempo_transcurrido = (tiempo_actual - tiempo_inicio) // 1000  # en segundos
-        minutos = tiempo_transcurrido // 60
-        segundos = tiempo_transcurrido % 60
-        texto_tiempo = f"{minutos:02}:{segundos:02}"
-    else:
-        texto_tiempo = "00:00"
-    return dibujar_boton(pantalla, COLOR_BLANCO, COLOR_FONDO, 0.50, 0.75, 0.1, 0.1, 0, 0, texto_tiempo)
+# def dibujar_reloj(pantalla, tiempo_inicio):
+#     '''la funcion dibuja un cronometro en pantalla.\n
+#     se le debe pasar como parametro la pantalla, el tiempo de donde va a iniciar el reloj\n
+#     retorna un boton con el cronometro como texto.'''
+#     if tiempo_inicio is not None:
+#         tiempo_actual = pg.time.get_ticks()
+#         tiempo_transcurrido = (tiempo_actual - tiempo_inicio) // 1000  # en segundos
+#         minutos = tiempo_transcurrido // 60
+#         segundos = tiempo_transcurrido % 60
+#         texto_tiempo = f"{minutos:02}:{segundos:02}"
+#     else:
+#         texto_tiempo = "00:00"
+#     return dibujar_boton(pantalla, COLOR_BLANCO, COLOR_FONDO, 0.50, 0.75, 0.1, 0.1, 0, 0, texto_tiempo)
+def contar_tiempo_preguntas(segundos_actual, inicio_pregunta, lista_preguntas:list)->list:
+    """Calcula cuánto tiempo tardó en responder una pregunta y lo agrega a la lista.
+    Args:
+        segundos_actual(int): Tiempo actual del cronómetro.
+        inicio_pregunta(int): Tiempo cuando empezó la pregunta.
+        lista_preguntas(list): Lista acumulada de tiempos por pregunta.
+    Returns:
+        lista_preguntas(list): Lista actualizada con el nuevo tiempo."""
+    tiempo_respuesta = segundos_actual - inicio_pregunta
+    if tiempo_respuesta == 0:
+        tiempo_respuesta = 1
+    lista_preguntas.append(tiempo_respuesta)
+
+    return lista_preguntas
+
+def calcular_puntaje(tiempos_preguntas:list, puntaje_base:int = 100)->int:
+    """Calcula el puntaje total en base al tiempo usado en cada pregunta.
+    Args:
+        tiempos_preguntas(list): Lista de tiempos por pregunta.
+        puntaje_base(int): Puntaje base por pregunta pór default 100. 
+    Returns:
+        total(int): Puntaje total."""
+    total = 0
+    for tiempo in tiempos_preguntas:
+        if tiempo < 1:
+            tiempo = 1
+        puntos = puntaje_base - (tiempo * 5)
+        if puntos < 10:
+            puntos = 10
+        total = total + puntos
+    return total
 
 def rescalar_imagen(imagen, pantalla):
     '''La funcion rescala imagenes al tamaño actual de la pantalla.\n

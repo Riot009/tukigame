@@ -33,19 +33,18 @@ opciones = []
 boton_respuesta = []
 seleccionada = None #variables par
 mostrar_resultado = False
-tiempo_espera = 0
-tiempo_inicio = None
+
 resolucion = (800,600)
 indice_resolucion = 0
 texto_resolucion = lista_a_string(resolucion, 'x')
 contador_volumen = 10
 incorrectas = 0
 puntaje = 0
-tiempos_respuesta = []
+
 respuestas_correctas = []
 opciones_ocultas = []
 comodin_usado = False
-tiempo_total = None
+
 archivo = open("datos.json", "r")
 todas = json.load(archivo)
 archivo.close()
@@ -58,7 +57,6 @@ pantalla = inicializar_pantalla(resolucion)
 
 nombre_jugador = ""
 ingresando_nombre = False
-#input_box = pg.Rect(pantalla.get_width() * 0.35, pantalla.get_height() * 0.45, 250, 50)
 color_inactivo = (200, 200, 200)
 color_activo = (255, 255, 255)
 color = color_inactivo
@@ -140,7 +138,7 @@ while True:
                     preguntas_incorrectas = 0
                     preguntas_correctas = 0
                     puntaje = 0
-                    tiempos_respuesta.clear()
+                    
                     respuestas_correctas.clear()
                     preguntas.clear()
                     pregunta_actual = 0
@@ -149,15 +147,12 @@ while True:
                     mostrar_fondo_correcto = False
                     mostrar_fondo_incorrecto = False
 
-                elif not mostrar_resultado:  # Solo permite clic si no está mostrando resultado
+                elif not mostrar_resultado:  
                     for i in range(len(boton_respuesta)):
                         if boton_respuesta[i].collidepoint(mouse_pos):
                             seleccionada = opciones[i]
                             mostrar_resultado = True
-                            tiempo_espera = pg.time.get_ticks()
-                            pausando_tiempo = False
-                            tiempo_respuesta = tiempo_espera - tiempo_inicio 
-                            tiempos_respuesta.append(tiempo_respuesta)
+                            
                             es_correcta = seleccionada == respuesta_correcta
                             respuestas_correctas.append(es_correcta)
                             if seleccionada == respuesta_correcta:
@@ -171,15 +166,14 @@ while True:
 
                 if boton_reiniciar.collidepoint(mouse_pos):
                     puntaje = 0
-                    tiempos_respuesta.clear()
+                    
                     respuestas_correctas.clear()
                     pregunta_actual = 0
                     seleccionada = None
                     mostrar_resultado = False
                     mostrar_fondo_correcto = False
                     mostrar_fondo_incorrecto = False
-                    tiempo_inicio = pg.time.get_ticks()
-                    tiempo_total = pg.time.get_ticks()
+
                     opciones_ocultas = []
                     comodin_usado = False
 
@@ -248,30 +242,29 @@ while True:
         boton_comodin2 = dibujar_boton(pantalla, COLOR_BLANCO, COLOR_FONDO, 0.50, 0.87, 0.2, 0.08, 0, 0, "Cambiar Pregunta.")
         boton_comodin3 = dibujar_boton(pantalla, COLOR_BLANCO, COLOR_FONDO, 0.825, 0.87, 0.2, 0.08, 0, 0, "Que venga el amigo!")
 
-        boton_contador = dibujar_reloj(pantalla, tiempo_total)
+        #boton_contador = dibujar_reloj(pantalla, tiempo_total)
 
         boton_atras = dibujar_boton(pantalla, COLOR_BLANCO, COLOR_FONDO, 0.06, 0.08, 0.09, 0.09, 0, 0, "<---")
 
         boton_mute = dibujar_boton(pantalla, COLOR_BLANCO, COLOR_FONDO, 0.94, 0.08, 0.09, 0.09, 0, 0, "mute")
         boton_reiniciar = dibujar_boton(pantalla, COLOR_BLANCO, COLOR_FONDO, 0.5, 0.95, 0.18, 0.08, 0, 0, "REINICIAR")
 
-        puntaje = calcular_puntaje(tiempos_respuesta, respuestas_correctas)
+        #puntaje = calcular_puntaje(tiempos_respuesta, respuestas_correctas)
         boton_puntaje_actual = dibujar_boton(pantalla, COLOR_BLANCO, COLOR_FONDO, 0.5, 0.05, 0.18, 0.08, 0, 0, f"Puntaje: {puntaje}")
 
     
     if mostrar_resultado:
         tiempo_actual = pg.time.get_ticks()
-        if tiempo_actual - tiempo_espera >= 2000:  # 2 segundos
-            pregunta_actual += 1
-            mostrar_resultado = False
-            seleccionada = None
-            opciones_ocultas = []
-            mostrar_fondo_correcto = False
-            mostrar_fondo_incorrecto = False
-            if pantalla_jugar and pregunta_actual < len(preguntas):
-                tiempo_inicio = pg.time.get_ticks()
+        
+        pregunta_actual += 1
+        mostrar_resultado = False
+        seleccionada = None
+        opciones_ocultas = []
+        mostrar_fondo_correcto = False
+        mostrar_fondo_incorrecto = False
 
-            if pregunta_actual >= len(preguntas):
+
+        if pregunta_actual >= len(preguntas):
 
                 if preguntas_correctas >= 6:
                     pantalla_ganaste = True
@@ -283,24 +276,6 @@ while True:
                     pantalla_jugar = False
                     
 
-                
-                # Calcular tiempo total de la partida
-                tiempo_total_ms = 0
-                for t in tiempos_respuesta:
-                    tiempo_total_ms += t
-                total_preguntas = len(preguntas)
-                respuestas_bien = 0
-                for r in respuestas_correctas:
-                    if r:
-                        respuestas_bien += 1
-                puntaje = calcular_puntaje(tiempos_respuesta, respuestas_correctas)
-                registrar_puntaje_csv(
-                    nombre_jugador,
-                    tiempo_total_ms,
-                    respuestas_bien,
-                    total_preguntas,
-                    puntaje
-                )
                 pg.mixer_music.stop()
                 pantalla_jugar = False
                 pantalla_principal = True
@@ -315,7 +290,7 @@ while True:
                 quit()
             if evento.type == pg.KEYDOWN:
                 if evento.key == pg.K_RETURN or evento.key == pg.K_ESCAPE:
-                    tiempos_respuesta.clear()
+                    
                     respuestas_correctas.clear()
                     preguntas.clear()
                     pregunta_actual = 0
@@ -359,7 +334,7 @@ while True:
                 pg.quit()
                 quit()
             if evento.key == pg.K_RETURN or evento.key == pg.K_ESCAPE:
-                tiempos_respuesta.clear()
+                
                 respuestas_correctas.clear()
                 preguntas.clear()
                 pregunta_actual = 0

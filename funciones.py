@@ -75,26 +75,33 @@ def dibujar_boton(pantalla: pg.Surface, color_texto: tuple, _color_borde: tuple,
 
     return rect
 
-def dividir_texto_en_lineas(texto:str, max_caracteres:str)->str:
-    '''La funcion divide el texto por linea.\n
-    se le debe pasar por parametro el texto y la cantidad maxima de caracteres por linea.\n
-    Retorna el texto con los salto de lineas.'''
-    lineas = []
-    linea = ""
+def dividir_texto_en_lineas(texto:str, longitud_max:str)->str:
     palabras = texto.split()
+    lineas = []
+    linea_actual = ""
 
     for palabra in palabras:
-        if len(linea) + len(palabra) + 1 <= max_caracteres:
-            if linea == "":
-                linea = palabra
+        if len(linea_actual) + len(palabra) + 1 <= longitud_max:
+            if linea_actual != "":
+                linea_actual = linea_actual + " " + palabra
             else:
-                linea = linea + " " + palabra
+                linea_actual = palabra
         else:
-            lineas.append(linea)
-            linea = palabra
+            lineas.append(linea_actual)
+            linea_actual = palabra
 
-    lineas.append(linea)
-    return "\n".join(lineas)
+    if linea_actual != "":
+        lineas.append(linea_actual)
+
+    # Construcción manual del resultado #
+    resultado = ""
+    for i in range(len(lineas)):
+        resultado = resultado + lineas[i]
+        if i < len(lineas) - 1:
+            resultado = resultado + "\n"
+
+    return resultado
+
 
 def ubicar_boton(pantalla:pg.Surface, porcentaje_x:int, porcentaje_y:int, porcentaje_ancho:int, porcentaje_alto:int):
     """La funcion ubica un boton en la pantalla.\n

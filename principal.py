@@ -40,6 +40,7 @@ boton_respuesta = []
 seleccionada = None #variables par
 mostrar_resultado = False
 
+
 resolucion = (800,600)
 indice_resolucion = 0
 texto_resolucion = lista_a_string(resolucion, 'x')
@@ -171,11 +172,13 @@ while True:
                         if boton_respuesta[i].collidepoint(mouse_pos):
                             seleccionada = opciones[i]
                             mostrar_resultado = True
+                            opcion_elegida = opciones_originales[i].strip().lower()
+                            respuesta_normalizada = respuesta_correcta.strip().lower()
                             tiempo_mostrar_resultado = pg.time.get_ticks()
                             
                             es_correcta = seleccionada == respuesta_correcta
                             respuestas_correctas.append(es_correcta)
-                            if seleccionada == respuesta_correcta:
+                            if opcion_elegida == respuesta_normalizada:
                                 preguntas_correctas += 1
                                 mostrar_fondo_correcto = True
                                 puntos_totales +=60 
@@ -249,12 +252,15 @@ while True:
         if pregunta_actual < len(preguntas):
             pregunta_data = preguntas[pregunta_actual]
             texto_pregunta = pregunta_data["pregunta"]
-            respuesta_correcta = pregunta_data["correcta"]
+
 
             opciones = []
+            opciones_originales = []
             for op in pregunta_data["respuestas"]:
+                opciones_originales.append(op.strip().lower())
                 opcion_con_salto_linea = dividir_texto_en_lineas(op, 20)
                 opciones.append(opcion_con_salto_linea)
+            respuesta_correcta = pregunta_data["correcta"]
 
         #botones
             texto_pregunta_multilinea = dividir_pregunta_en_lineas(texto_pregunta, 11)
@@ -264,11 +270,11 @@ while True:
             colores = [COLOR_BLANCO] * 4
             if mostrar_resultado:
                 for i in range(4):
-                    if opciones[i] == respuesta_correcta:
+                    if opciones_originales[i] == respuesta_normalizada:
                         colores[i] = COLOR_VERDE
                         pg.time.set_timer(evento_tick, 0)
    
-                    elif opciones[i] == seleccionada:
+                    elif opciones_originales[i] == opcion_elegida:
                         colores[i] = COLOR_ROJO
                         pg.time.set_timer(evento_tick, 0)
                         

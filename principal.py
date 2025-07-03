@@ -155,6 +155,8 @@ while True:
                     preguntas_incorrectas = 0
                     preguntas_correctas = 0
                     puntaje = 0
+                    puntos_totales = 0
+                    
                     
                     respuestas_correctas.clear()
                     preguntas.clear()
@@ -178,6 +180,8 @@ while True:
                                 puntos_totales +=60 
                                 puntos_totales = calcular_puntaje(puntos_totales, segundo_puntaje)
                                 segundo_puntaje = 0
+                                pg.time.set_timer(evento_tick,un_segundo)
+
                                 
                             else:
                                 preguntas_incorrectas += 1
@@ -194,6 +198,10 @@ while True:
                     mostrar_resultado = False
                     mostrar_fondo_correcto = False
                     mostrar_fondo_incorrecto = False
+                    puntos_totales = 0
+                    segundo_puntaje = 0
+                    segundos = 0
+                    minutos = 0
 
                     opciones_ocultas = []
                     comodin_usado = False
@@ -212,6 +220,12 @@ while True:
 
                 if boton_comodin2.collidepoint(mouse_pos) and not comodin_usado:
                     cambiar_pregunta(todas,preguntas, pregunta_actual)
+                    comodin_usado = True
+                    seleccionada = None
+                    mostrar_resultado = False
+                
+                if boton_comodin3.collidepoint(mouse_pos) and not comodin_usado:
+                    pg.time.set_timer(evento_tick, 0)
                     comodin_usado = True
                     seleccionada = None
                     mostrar_resultado = False
@@ -291,13 +305,17 @@ while True:
                 if preguntas_correctas >= 6:
                     pantalla_ganaste = True
                     pantalla_jugar = False
+                    puntos_totales = 0
+                    segundos=0
+                    segundo_puntaje=0
+                    minutos=0
                     
                 
                 elif preguntas_incorrectas >= 4:
                     pantalla_perdiste = True
                     pantalla_jugar = False
                     
-                guardar_jugador_csv(nombre_jugador, puntos_totales, timer)
+                guardar_jugador_csv(preguntas_correctas,nombre_jugador, puntos_totales, timer)
                 pg.mixer_music.stop()
                 pantalla_jugar = False
                 pantalla_principal = True
@@ -333,14 +351,14 @@ while True:
     
         boton_ganaste = dibujar_boton(pantalla, COLOR_BLANCO,COLOR_FONDO, 0.50, 0.15, 0.30, 0.30, 0, 0, 'Ganaste!')
 
-        top_puntajes = leer_top_puntajes()
+        top_puntajes = leer_top_puntajes(preguntas_correctas,preguntas,ruta_csv=RUTA_PUNTAJES)
         margen_izquierdo = pantalla.get_width() * 0.10
         posicion_inicial_y = pantalla.get_height() * 0.35
         ancho_tabla = pantalla.get_width() * 0.80
         alto_fila = pantalla.get_height() * 0.06
 
         # Encabezados
-        encabezados = ["Nombre", "Tiempo", "Puntaje"]
+        encabezados = ["Nombre", "Puntaje", "Tiempo","porcentaje"]
         dibujar_encabezados(pantalla, encabezados, margen_izquierdo, 0.25, 0.18, alto_fila)
 
         # Filas de puntajes
@@ -384,7 +402,7 @@ while True:
         alto_fila = pantalla.get_height() * 0.06
 
         # Encabezados
-        encabezados = ["Nombre", "Tiempo", "Puntaje"]
+        encabezados = ["Nombre", "Puntaje", "Tiempo","porcentaje"]
         dibujar_encabezados(pantalla, encabezados, margen_izquierdo, 0.25, 0.18, alto_fila)
 
         # Filas de puntajes
@@ -405,14 +423,14 @@ while True:
 
         pantalla.blit(rescalar_imagen(imagen_fondo,pantalla), (0,0))
 
-        top_puntajes = leer_top_puntajes()
+        top_puntajes = leer_top_puntajes(respuestas_correctas,preguntas,ruta_csv=RUTA_PUNTAJES)
         margen_izquierdo = pantalla.get_width() * 0.10
         posicion_inicial_y = pantalla.get_height() * 0.25
         ancho_tabla = pantalla.get_width() * 0.80
         alto_fila = pantalla.get_height() * 0.06
 
         # Encabezados
-        encabezados = ["Nombre", "Tiempo", "Puntaje"]
+        encabezados = ["Nombre", "Puntaje", "Tiempo","porcentaje"]
         dibujar_encabezados(pantalla, encabezados, margen_izquierdo, 0.18, 0.18, alto_fila)
 
         # Filas de puntajes

@@ -258,21 +258,7 @@ def dividir_texto_en_lineas(texto, max_caracteres):
     lineas.append(linea)
     return "\n".join(lineas)
 
-# def calcular_puntaje(tiempos_respuesta, respuestas_correctas):
-#     '''La funcion calcula el puntaje por partida en base al tiempo por cada respuesta y si es correcta o no.\n
-#     se le pasa como parametro el tiempo de respuesta y las respuestas correctas.\n
-#     retorna el puntaje.'''
-#     # 3 puntos por cada respuesta correcta en menos de 20 segundos
-#     puntos = 0
-#     for correcto, tiempo in zip(respuestas_correctas, tiempos_respuesta):
-#         if (correcto and tiempo >= 10000) and (correcto and tiempo <= 20000):
-#             puntos += 150
-#         elif correcto and tiempo < 10000:
-#             puntos += 300
-#         elif correcto and tiempo > 20000:
-#             puntos += 50
 
-#     return puntos
 
 
 # def registrar_puntaje_csv(nombre_jugador, minutos, segundos, respuestas_correctas, total_preguntas, puntaje_total, ruta_csv=RUTA_PUNTAJES):
@@ -320,8 +306,13 @@ def dividir_texto_en_lineas(texto, max_caracteres):
 #                 archivo.write(linea)
 #     except Exception as e:
 #         print(f"Error al guardar puntaje: {e}")
+def calcular_porcentaje(preguntas_correctas):
+    porcentaje_correctas = 0
+    porcentaje_correctas = (preguntas_correctas * 100) // 10
+    return porcentaje_correctas
 
-def guardar_jugador_csv(nombre:str, puntos:int, tiempo:str, ruta:str=RUTA_PUNTAJES):
+
+def guardar_jugador_csv(respuestas_correctas,nombre:str, puntos:int, timer:str, ruta:str=RUTA_PUNTAJES):
     """
     Guarda o actualiza jugador en un csv de 10 mejores. Si existe, reemplaza sólo si el nuevo puntaje es mejor.
     Args:
@@ -331,6 +322,7 @@ def guardar_jugador_csv(nombre:str, puntos:int, tiempo:str, ruta:str=RUTA_PUNTAJ
         ruta(str): Ruta del CSV por Defaul Ruta del CSV del juego.
     Returns:
     """
+    porcentaje = calcular_porcentaje(respuestas_correctas)
     if not nombre.strip():
         pass
 
@@ -340,8 +332,8 @@ def guardar_jugador_csv(nombre:str, puntos:int, tiempo:str, ruta:str=RUTA_PUNTAJ
         with open(ruta, "r") as archivo:
             for linea in archivo:
                 datos = linea.strip().split(",")
-                if len(datos) == 3:
-                    jugadores.append({"nombre": datos[0], "puntos": int(datos[1]), "tiempo": datos[2]})
+                if len(datos) == 4:
+                    jugadores.append({"nombre": datos[0], "puntos": int(datos[1]), "tiempo": datos[2], "porcentaje":datos[3]})
     except FileNotFoundError:
         print("Archivo no encontrado. Se creará nuevo.")
 
@@ -352,7 +344,8 @@ def guardar_jugador_csv(nombre:str, puntos:int, tiempo:str, ruta:str=RUTA_PUNTAJ
             if puntos > j["puntos"]:
                 print(f"Reemplazando puntaje de {nombre} por mayor puntaje")
                 j["puntos"] = puntos
-                j["tiempo"] = tiempo
+                j["tiempo"] = timer
+                j["porcentaje"] = porcentaje
             else:
                 print(f"Puntaje de {nombre} no supera el anterior")
             reemplazado = True
@@ -360,7 +353,7 @@ def guardar_jugador_csv(nombre:str, puntos:int, tiempo:str, ruta:str=RUTA_PUNTAJ
 
     if not reemplazado:
         print(f"Agregando nuevo jugador: {nombre}")
-        jugadores.append({"nombre": nombre, "puntos": puntos, "tiempo": tiempo})
+        jugadores.append({"nombre": nombre, "puntos": puntos, "tiempo": timer,"porcentaje":porcentaje})
 
     # Ordenar
     jugadores.sort(key=lambda x: x["puntos"], reverse=True)
@@ -370,34 +363,32 @@ def guardar_jugador_csv(nombre:str, puntos:int, tiempo:str, ruta:str=RUTA_PUNTAJ
     try:
         with open(ruta, "w", encoding="utf-8") as archivo:
             for j in jugadores:
-                linea = f"{j['nombre']},{j['puntos']},{j['tiempo']}\n"
+                linea = f"{j['nombre']},{j['puntos']},{j['tiempo']},{j['porcentaje']}\n"
                 archivo.write(linea)
         print("Archivo guardado exitosamente.")
     except Exception as e:
         print(f"No se pudo escribir el archivo: {e}")
 
-def leer_top_puntajes(ruta_csv=RUTA_PUNTAJES, top=10):
+def leer_top_puntajes(respuestas_correctas,total_preguntas,ruta_csv=RUTA_PUNTAJES, top=10):
     '''La funcion lee el archivo de puntajes y extrae los 10 primeros jugadores.\n
     se le pasa como parametro la ruta al archivo y la cantidad de jugadores a extraer.\n
     Retorna una lista.'''
     puntajes = []
+    
     with open(ruta_csv, "r", encoding="utf-8") as archivo:
-        encabezado = archivo.readline()
+        # encabezado = archivo.readline()
+        
         for linea in archivo:
             partes = linea.strip().split(",")
-            if len(partes) == 3:
+            if len(partes) == 4:
                 nombre = partes[0]
-                tiempo = partes[1]
-                
+                tiempo = partes[2]
+                porcentaje = partes[3]
                 try:
-                    puntaje = int(partes[2])
+                    puntaje = int(partes[1])
                 except:
                     puntaje = 0
-                puntajes.append({
-                    "Nombre": nombre,
-                    "Tiempo total": tiempo,
-                    "Puntaje": puntaje
-                })
+                puntajes.append({"Nombre": nombre,"Tiempo total": tiempo,"Puntaje": puntaje,"porcentaje": porcentaje})
     # Ordenar por puntaje descendente
     for i in range(len(puntajes)):
         for j in range(i+1, len(puntajes)):
@@ -480,7 +471,7 @@ def dibujar_filas(pantalla, filas, x_base, y_base, ancho_col, alto_fila):
     se le debe pasar como parametro: pantalla, cantidad de filas, posicion en x, posicion en y, ancho de columna, alto de fila\n
     No retorna.'''
     for idx, fila in enumerate(filas):
-        datos = [fila["Nombre"], fila["Tiempo total"], str(fila["Puntaje"])]
+        datos = [fila["Nombre"], str(fila["Puntaje"]), fila["Tiempo total"], fila["porcentaje"]]
         y_rel = (y_base + idx * alto_fila + alto_fila / 2) / pantalla.get_height()
         for i, texto in enumerate(datos):
             x_rel = x_base / pantalla.get_width() + (i + 0.5) * ancho_col

@@ -24,8 +24,12 @@ mostrar_fondo_correcto = False
 mostrar_fondo_incorrecto = False
 
 
-
-
+puntos = 0
+segundos = 0
+minutos = 0
+segundo_puntaje = 0
+puntos_totales = 0
+#minuto_puntaje = 0
 preguntas = []
 pregunta_actual = 0
 respuesta_correcta = ""
@@ -123,11 +127,23 @@ while True:
             if evento.type == pg.QUIT:
                 pg.quit()
                 quit()
+            if evento.type == evento_tick:
+                segundos += 1
+                segundo_puntaje += 1
+                if segundo_puntaje >= 60:
+                    segundo_puntaje = 0
+
+                if segundos >= 60:
+                    segundos = 0
+                    minutos += 1
+                    
 
             if evento.type == pg.MOUSEBUTTONDOWN:
                 mouse_pos = evento.pos
 
                 if boton_atras.collidepoint(mouse_pos):
+                    segundos = 0
+                    minutos = 0
                     pantalla_principal = True
                     pantalla_jugar = False
                     pg.mixer_music.stop()                   
@@ -158,10 +174,13 @@ while True:
                             if seleccionada == respuesta_correcta:
                                 preguntas_correctas += 1
                                 mostrar_fondo_correcto = True
-                                
+                                segundos_puntajes = 0
+                                puntos_totales = calcular_puntaje(puntos_totales, segundos_puntajes)
+                                segundo_puntaje = 0
                             else:
                                 preguntas_incorrectas += 1
                                 mostrar_fondo_incorrecto = True
+                                segundo_puntaje = 0
                                 
 
                 if boton_reiniciar.collidepoint(mouse_pos):
@@ -241,8 +260,9 @@ while True:
         boton_comodin1 = dibujar_boton(pantalla, COLOR_BLANCO, COLOR_FONDO, 0.175, 0.87, 0.2, 0.08, 0, 0, "50/50")
         boton_comodin2 = dibujar_boton(pantalla, COLOR_BLANCO, COLOR_FONDO, 0.50, 0.87, 0.2, 0.08, 0, 0, "Cambiar Pregunta.")
         boton_comodin3 = dibujar_boton(pantalla, COLOR_BLANCO, COLOR_FONDO, 0.825, 0.87, 0.2, 0.08, 0, 0, "Que venga el amigo!")
-
-        #boton_contador = dibujar_reloj(pantalla, tiempo_total)
+        
+        # tiempo en minutos y segundos
+        boton_contador = dibujar_boton(pantalla, COLOR_BLANCO, COLOR_FONDO, 0.5, 0.08, 0.09, 0.09, 0, 0, f"Tiempo: {minutos:02}:{segundos:02}")
 
         boton_atras = dibujar_boton(pantalla, COLOR_BLANCO, COLOR_FONDO, 0.06, 0.08, 0.09, 0.09, 0, 0, "<---")
 
@@ -250,8 +270,8 @@ while True:
         boton_reiniciar = dibujar_boton(pantalla, COLOR_BLANCO, COLOR_FONDO, 0.5, 0.95, 0.18, 0.08, 0, 0, "REINICIAR")
 
         #puntaje = calcular_puntaje(tiempos_respuesta, respuestas_correctas)
-        boton_puntaje_actual = dibujar_boton(pantalla, COLOR_BLANCO, COLOR_FONDO, 0.5, 0.05, 0.18, 0.08, 0, 0, f"Puntaje: {puntaje}")
-
+        #boton_puntaje_actual = dibujar_boton(pantalla, COLOR_BLANCO, COLOR_FONDO, 0.5, 0.05, 0.18, 0.08, 0, 0, f"Puntaje: {puntaje}")
+        boton_puntaje_actual = dibujar_boton(pantalla, COLOR_BLANCO, COLOR_FONDO, 0.5, 0.05, 0.09, 0.09, 0, 0, f"Puntos: {puntos_totales}")
     
     if mostrar_resultado:
         tiempo_actual = pg.time.get_ticks()
@@ -516,8 +536,13 @@ while True:
                             pantalla_jugar = True
                             sonido_perdiste = False
                             sonido_ganaste = False
-                            tiempo_inicio = pg.time.get_ticks()
-                            tiempo_total = pg.time.get_ticks()                           
+                            # tiempo_inicio = pg.time.get_ticks()
+                            # tiempo_total = pg.time.get_ticks()
+                            
+                            #timer
+                            evento_tick = pg.USEREVENT + 3
+                            un_segundo = 1000
+                            pg.time.set_timer(evento_tick, un_segundo)                           
                             if not musica_juego_iniciada:
                                 reproducir_sonido(RUTA_SONIDO_JUEGO,volumen,-1)
                                 musica_juego_iniciada = True

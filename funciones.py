@@ -170,37 +170,29 @@ def cronometro_juego()-> int:
 #     else:
 #         texto_tiempo = "00:00"
 #     return dibujar_boton(pantalla, COLOR_BLANCO, COLOR_FONDO, 0.50, 0.75, 0.1, 0.1, 0, 0, texto_tiempo)
-def contar_tiempo_preguntas(segundos_actual, inicio_pregunta, lista_preguntas:list)->list:
-    """Calcula cuánto tiempo tardó en responder una pregunta y lo agrega a la lista.
-    Args:
-        segundos_actual(int): Tiempo actual del cronómetro.
-        inicio_pregunta(int): Tiempo cuando empezó la pregunta.
-        lista_preguntas(list): Lista acumulada de tiempos por pregunta.
-    Returns:
-        lista_preguntas(list): Lista actualizada con el nuevo tiempo."""
-    tiempo_respuesta = segundos_actual - inicio_pregunta
-    if tiempo_respuesta == 0:
-        tiempo_respuesta = 1
-    lista_preguntas.append(tiempo_respuesta)
+# def contar_tiempo_preguntas(segundos_actual, inicio_pregunta, lista_preguntas:list)->list:
+#     """Calcula cuánto tiempo tardó en responder una pregunta y lo agrega a la lista.
+#     Args:
+#         segundos_actual(int): Tiempo actual del cronómetro.
+#         inicio_pregunta(int): Tiempo cuando empezó la pregunta.
+#         lista_preguntas(list): Lista acumulada de tiempos por pregunta.
+#     Returns:
+#         lista_preguntas(list): Lista actualizada con el nuevo tiempo."""
+#     tiempo_respuesta = segundos_actual - inicio_pregunta
+#     if tiempo_respuesta == 0:
+#         tiempo_respuesta = 1
+#     lista_preguntas.append(tiempo_respuesta)
 
-    return lista_preguntas
+#     return lista_preguntas
 
-def calcular_puntaje(tiempos_preguntas:list, puntaje_base:int = 100)->int:
-    """Calcula el puntaje total en base al tiempo usado en cada pregunta.
-    Args:
-        tiempos_preguntas(list): Lista de tiempos por pregunta.
-        puntaje_base(int): Puntaje base por pregunta pór default 100. 
-    Returns:
-        total(int): Puntaje total."""
-    total = 0
-    for tiempo in tiempos_preguntas:
-        if tiempo < 1:
-            tiempo = 1
-        puntos = puntaje_base - (tiempo * 5)
-        if puntos < 10:
-            puntos = 10
-        total = total + puntos
-    return total
+
+def calcular_puntaje(total_puntajes,segundos_puntajes,puntaje_base:int=60)->int:
+
+    if segundos_puntajes <= 20:
+        total_puntajes += puntaje_base + 3
+    else:
+        total_puntajes += puntaje_base
+    return total_puntajes
 
 def rescalar_imagen(imagen, pantalla):
     '''La funcion rescala imagenes al tamaño actual de la pantalla.\n
@@ -266,21 +258,21 @@ def dividir_texto_en_lineas(texto, max_caracteres):
     lineas.append(linea)
     return "\n".join(lineas)
 
-def calcular_puntaje(tiempos_respuesta, respuestas_correctas):
-    '''La funcion calcula el puntaje por partida en base al tiempo por cada respuesta y si es correcta o no.\n
-    se le pasa como parametro el tiempo de respuesta y las respuestas correctas.\n
-    retorna el puntaje.'''
-    # 3 puntos por cada respuesta correcta en menos de 20 segundos
-    puntos = 0
-    for correcto, tiempo in zip(respuestas_correctas, tiempos_respuesta):
-        if (correcto and tiempo >= 10000) and (correcto and tiempo <= 20000):
-            puntos += 150
-        elif correcto and tiempo < 10000:
-            puntos += 300
-        elif correcto and tiempo > 20000:
-            puntos += 50
+# def calcular_puntaje(tiempos_respuesta, respuestas_correctas):
+#     '''La funcion calcula el puntaje por partida en base al tiempo por cada respuesta y si es correcta o no.\n
+#     se le pasa como parametro el tiempo de respuesta y las respuestas correctas.\n
+#     retorna el puntaje.'''
+#     # 3 puntos por cada respuesta correcta en menos de 20 segundos
+#     puntos = 0
+#     for correcto, tiempo in zip(respuestas_correctas, tiempos_respuesta):
+#         if (correcto and tiempo >= 10000) and (correcto and tiempo <= 20000):
+#             puntos += 150
+#         elif correcto and tiempo < 10000:
+#             puntos += 300
+#         elif correcto and tiempo > 20000:
+#             puntos += 50
 
-    return puntos
+#     return puntos
 
 
 def registrar_puntaje_csv(nombre_jugador, tiempo_total_ms, respuestas_correctas, total_preguntas, puntaje_total, ruta_csv=RUTA_PUNTAJES):
